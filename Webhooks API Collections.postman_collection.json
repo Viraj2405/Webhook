@@ -1,0 +1,1644 @@
+{
+	"info": {
+		"_postman_id": "83294135-c996-4e81-8491-4cef2c52eab8",
+		"name": "Webhooks API Collections",
+		"description": "The Webhooks API allows you to subscribe to events happening in a HubSpot account with your integration installed. Rather than making an API call when an event happens in a connected account, HubSpot can send an HTTP request to an endpoint you configure. You can configure subscribed events in your app’s settings or using the endpoints detailed below. Webhooks can be more scalable than regularly polling for changes, especially for apps with a large install base.\n\nUsing the Webhooks API requires the following:\n\n- You must set up a HubSpot app to use webhooks by subscribing to the events you want to be notified about, and by specifying a URL to send those notifications. See the [prerequisites documentation](https://developers.hubspot.com/docs/faq/integration-platform-api-requirements) for more details about creating an app.\n- You must deploy a publicly available and secure (HTTPS) endpoint for that URL that can handle the webhook payloads specified in this documentation.\n    \n\nWebhooks are set up for a [HubSpot app](https://developers.hubspot.com/docs/faq/how-do-i-create-an-app-in-hubspot), not individual accounts. Any account that install your app by going through the [OAuth flow](https://developers.hubspot.com/docs/methods/oauth2/initiate-oauth-integration) will be subscribed to its webhook subscriptions.\n\nYou can subscribe to CRM object events, which includes contacts, companies, deals, tickets, products and line items, as well as conversations events.\n\n**Fork the collections using Run in Postman:**\n\n[<img src=\"https://run.pstmn.io/button.svg\" alt=\"Run In Postman\">](https://app.getpostman.com/run-collection/26126890-83294135-c996-4e81-8491-4cef2c52eab8?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D26126890-83294135-c996-4e81-8491-4cef2c52eab8%26entityType%3Dcollection%26workspaceId%3Dd7645f33-539d-49c6-9e0c-efa6faae355d)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23236759",
+		"_collection_link": "https://www.postman.com/hubspot/workspace/hubspot-public-api-workspace/collection/26126890-83294135-c996-4e81-8491-4cef2c52eab8?action=share&source=collection_link&creator=23236759"
+	},
+	"item": [
+		{
+			"name": "Webhooks API",
+			"item": [
+				{
+					"name": "Settings",
+					"item": [
+						{
+							"name": "get-/webhooks/v3/{app Id}/settings get All",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "key",
+											"value": "hapikey",
+											"type": "string"
+										},
+										{
+											"key": "value",
+											"value": "{{apiKey}}",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "query",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/webhooks/v3/:appId/settings",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"webhooks",
+										"v3",
+										":appId",
+										"settings"
+									],
+									"variable": [
+										{
+											"key": "appId",
+											"value": "<integer>"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "successful operation",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/webhooks/v3/:appId/settings?hapikey=<API Key>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"webhooks",
+												"v3",
+												":appId",
+												"settings"
+											],
+											"query": [
+												{
+													"key": "hapikey",
+													"value": "<API Key>",
+													"description": "Added as a part of security scheme: apikey"
+												}
+											],
+											"variable": [
+												{
+													"key": "appId"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"createdAt\": \"<dateTime>\",\n  \"targetUrl\": \"<string>\",\n  \"throttling\": {\n    \"maxConcurrentRequests\": \"<integer>\",\n    \"period\": \"ROLLING_MINUTE\"\n  },\n  \"updatedAt\": \"<dateTime>\"\n}"
+								},
+								{
+									"name": "An error occurred.",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/webhooks/v3/:appId/settings?hapikey=<API Key>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"webhooks",
+												"v3",
+												":appId",
+												"settings"
+											],
+											"query": [
+												{
+													"key": "hapikey",
+													"value": "<API Key>",
+													"description": "Added as a part of security scheme: apikey"
+												}
+											],
+											"variable": [
+												{
+													"key": "appId"
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"category\": \"<string>\",\n  \"correlationId\": \"<uuid>\",\n  \"message\": \"<string>\",\n  \"subCategory\": \"<string>\",\n  \"errors\": [\n    {\n      \"message\": \"<string>\",\n      \"in\": \"<string>\",\n      \"code\": \"<string>\",\n      \"subCategory\": \"<string>\",\n      \"context\": {\n        \"nisi2\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"nisi_bd0\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"ad_a\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    {\n      \"message\": \"<string>\",\n      \"in\": \"<string>\",\n      \"code\": \"<string>\",\n      \"subCategory\": \"<string>\",\n      \"context\": {\n        \"nisidf\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"amet73d\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"in9e\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"Lorem_b47\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    }\n  ],\n  \"context\": {\n    \"ipsum_d00\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"links\": {\n    \"velit__8d\": \"<string>\",\n    \"amet8b\": \"<string>\"\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "put-/webhooks/v3/{app Id}/settings configure",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "key",
+											"value": "hapikey",
+											"type": "string"
+										},
+										{
+											"key": "value",
+											"value": "{{apiKey}}",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "query",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"targetUrl\": \"<string>\",\n  \"throttling\": {\n    \"maxConcurrentRequests\": \"<integer>\",\n    \"period\": \"ROLLING_MINUTE\"\n  }\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/webhooks/v3/:appId/settings",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"webhooks",
+										"v3",
+										":appId",
+										"settings"
+									],
+									"variable": [
+										{
+											"key": "appId",
+											"value": "<integer>"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "successful operation",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"targetUrl\": \"<string>\",\n  \"throttling\": {\n    \"maxConcurrentRequests\": \"<integer>\",\n    \"period\": \"ROLLING_MINUTE\"\n  }\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/webhooks/v3/:appId/settings?hapikey=<API Key>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"webhooks",
+												"v3",
+												":appId",
+												"settings"
+											],
+											"query": [
+												{
+													"key": "hapikey",
+													"value": "<API Key>",
+													"description": "Added as a part of security scheme: apikey"
+												}
+											],
+											"variable": [
+												{
+													"key": "appId"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"createdAt\": \"<dateTime>\",\n  \"targetUrl\": \"<string>\",\n  \"throttling\": {\n    \"maxConcurrentRequests\": \"<integer>\",\n    \"period\": \"ROLLING_MINUTE\"\n  },\n  \"updatedAt\": \"<dateTime>\"\n}"
+								},
+								{
+									"name": "An error occurred.",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"targetUrl\": \"<string>\",\n  \"throttling\": {\n    \"maxConcurrentRequests\": \"<integer>\",\n    \"period\": \"ROLLING_MINUTE\"\n  }\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/webhooks/v3/:appId/settings?hapikey=<API Key>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"webhooks",
+												"v3",
+												":appId",
+												"settings"
+											],
+											"query": [
+												{
+													"key": "hapikey",
+													"value": "<API Key>",
+													"description": "Added as a part of security scheme: apikey"
+												}
+											],
+											"variable": [
+												{
+													"key": "appId"
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"category\": \"<string>\",\n  \"correlationId\": \"<uuid>\",\n  \"message\": \"<string>\",\n  \"subCategory\": \"<string>\",\n  \"errors\": [\n    {\n      \"message\": \"<string>\",\n      \"in\": \"<string>\",\n      \"code\": \"<string>\",\n      \"subCategory\": \"<string>\",\n      \"context\": {\n        \"nisi2\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"nisi_bd0\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"ad_a\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    {\n      \"message\": \"<string>\",\n      \"in\": \"<string>\",\n      \"code\": \"<string>\",\n      \"subCategory\": \"<string>\",\n      \"context\": {\n        \"nisidf\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"amet73d\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"in9e\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"Lorem_b47\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    }\n  ],\n  \"context\": {\n    \"ipsum_d00\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"links\": {\n    \"velit__8d\": \"<string>\",\n    \"amet8b\": \"<string>\"\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "delete-/webhooks/v3/{app Id}/settings clear",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "key",
+											"value": "hapikey",
+											"type": "string"
+										},
+										{
+											"key": "value",
+											"value": "{{apiKey}}",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "query",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/webhooks/v3/:appId/settings",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"webhooks",
+										"v3",
+										":appId",
+										"settings"
+									],
+									"variable": [
+										{
+											"key": "appId",
+											"value": "<integer>"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "No content",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/webhooks/v3/:appId/settings?hapikey=<API Key>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"webhooks",
+												"v3",
+												":appId",
+												"settings"
+											],
+											"query": [
+												{
+													"key": "hapikey",
+													"value": "<API Key>",
+													"description": "Added as a part of security scheme: apikey"
+												}
+											],
+											"variable": [
+												{
+													"key": "appId"
+												}
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": null
+								},
+								{
+									"name": "An error occurred.",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/webhooks/v3/:appId/settings?hapikey=<API Key>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"webhooks",
+												"v3",
+												":appId",
+												"settings"
+											],
+											"query": [
+												{
+													"key": "hapikey",
+													"value": "<API Key>",
+													"description": "Added as a part of security scheme: apikey"
+												}
+											],
+											"variable": [
+												{
+													"key": "appId"
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"category\": \"<string>\",\n  \"correlationId\": \"<uuid>\",\n  \"message\": \"<string>\",\n  \"subCategory\": \"<string>\",\n  \"errors\": [\n    {\n      \"message\": \"<string>\",\n      \"in\": \"<string>\",\n      \"code\": \"<string>\",\n      \"subCategory\": \"<string>\",\n      \"context\": {\n        \"nisi2\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"nisi_bd0\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"ad_a\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    {\n      \"message\": \"<string>\",\n      \"in\": \"<string>\",\n      \"code\": \"<string>\",\n      \"subCategory\": \"<string>\",\n      \"context\": {\n        \"nisidf\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"amet73d\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"in9e\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"Lorem_b47\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    }\n  ],\n  \"context\": {\n    \"ipsum_d00\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"links\": {\n    \"velit__8d\": \"<string>\",\n    \"amet8b\": \"<string>\"\n  }\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Subscriptions",
+					"item": [
+						{
+							"name": "get-/webhooks/v3/{app Id}/subscriptions/{subscription Id} get By Id",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "key",
+											"value": "hapikey",
+											"type": "string"
+										},
+										{
+											"key": "value",
+											"value": "{{apiKey}}",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "query",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/webhooks/v3/:appId/subscriptions/:subscriptionId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"webhooks",
+										"v3",
+										":appId",
+										"subscriptions",
+										":subscriptionId"
+									],
+									"variable": [
+										{
+											"key": "appId",
+											"value": "<integer>"
+										},
+										{
+											"key": "subscriptionId",
+											"value": "<integer>"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "successful operation",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/webhooks/v3/:appId/subscriptions/:subscriptionId?hapikey=<API Key>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"webhooks",
+												"v3",
+												":appId",
+												"subscriptions",
+												":subscriptionId"
+											],
+											"query": [
+												{
+													"key": "hapikey",
+													"value": "<API Key>",
+													"description": "Added as a part of security scheme: apikey"
+												}
+											],
+											"variable": [
+												{
+													"key": "appId"
+												},
+												{
+													"key": "subscriptionId"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"active\": \"<boolean>\",\n  \"createdAt\": \"<dateTime>\",\n  \"eventType\": \"deal.propertyChange\",\n  \"id\": \"<string>\",\n  \"propertyName\": \"<string>\",\n  \"updatedAt\": \"<dateTime>\"\n}"
+								},
+								{
+									"name": "An error occurred.",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/webhooks/v3/:appId/subscriptions/:subscriptionId?hapikey=<API Key>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"webhooks",
+												"v3",
+												":appId",
+												"subscriptions",
+												":subscriptionId"
+											],
+											"query": [
+												{
+													"key": "hapikey",
+													"value": "<API Key>",
+													"description": "Added as a part of security scheme: apikey"
+												}
+											],
+											"variable": [
+												{
+													"key": "appId"
+												},
+												{
+													"key": "subscriptionId"
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"category\": \"<string>\",\n  \"correlationId\": \"<uuid>\",\n  \"message\": \"<string>\",\n  \"subCategory\": \"<string>\",\n  \"errors\": [\n    {\n      \"message\": \"<string>\",\n      \"in\": \"<string>\",\n      \"code\": \"<string>\",\n      \"subCategory\": \"<string>\",\n      \"context\": {\n        \"nisi2\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"nisi_bd0\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"ad_a\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    {\n      \"message\": \"<string>\",\n      \"in\": \"<string>\",\n      \"code\": \"<string>\",\n      \"subCategory\": \"<string>\",\n      \"context\": {\n        \"nisidf\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"amet73d\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"in9e\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"Lorem_b47\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    }\n  ],\n  \"context\": {\n    \"ipsum_d00\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"links\": {\n    \"velit__8d\": \"<string>\",\n    \"amet8b\": \"<string>\"\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "delete-/webhooks/v3/{app Id}/subscriptions/{subscription Id} archive",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "key",
+											"value": "hapikey",
+											"type": "string"
+										},
+										{
+											"key": "value",
+											"value": "{{apiKey}}",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "query",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/webhooks/v3/:appId/subscriptions/:subscriptionId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"webhooks",
+										"v3",
+										":appId",
+										"subscriptions",
+										":subscriptionId"
+									],
+									"variable": [
+										{
+											"key": "appId",
+											"value": "<integer>"
+										},
+										{
+											"key": "subscriptionId",
+											"value": "<integer>"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "No content",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/webhooks/v3/:appId/subscriptions/:subscriptionId?hapikey=<API Key>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"webhooks",
+												"v3",
+												":appId",
+												"subscriptions",
+												":subscriptionId"
+											],
+											"query": [
+												{
+													"key": "hapikey",
+													"value": "<API Key>",
+													"description": "Added as a part of security scheme: apikey"
+												}
+											],
+											"variable": [
+												{
+													"key": "appId"
+												},
+												{
+													"key": "subscriptionId"
+												}
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": null
+								},
+								{
+									"name": "An error occurred.",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/webhooks/v3/:appId/subscriptions/:subscriptionId?hapikey=<API Key>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"webhooks",
+												"v3",
+												":appId",
+												"subscriptions",
+												":subscriptionId"
+											],
+											"query": [
+												{
+													"key": "hapikey",
+													"value": "<API Key>",
+													"description": "Added as a part of security scheme: apikey"
+												}
+											],
+											"variable": [
+												{
+													"key": "appId"
+												},
+												{
+													"key": "subscriptionId"
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"category\": \"<string>\",\n  \"correlationId\": \"<uuid>\",\n  \"message\": \"<string>\",\n  \"subCategory\": \"<string>\",\n  \"errors\": [\n    {\n      \"message\": \"<string>\",\n      \"in\": \"<string>\",\n      \"code\": \"<string>\",\n      \"subCategory\": \"<string>\",\n      \"context\": {\n        \"nisi2\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"nisi_bd0\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"ad_a\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    {\n      \"message\": \"<string>\",\n      \"in\": \"<string>\",\n      \"code\": \"<string>\",\n      \"subCategory\": \"<string>\",\n      \"context\": {\n        \"nisidf\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"amet73d\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"in9e\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"Lorem_b47\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    }\n  ],\n  \"context\": {\n    \"ipsum_d00\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"links\": {\n    \"velit__8d\": \"<string>\",\n    \"amet8b\": \"<string>\"\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "patch-/webhooks/v3/{app Id}/subscriptions/{subscription Id} update",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "key",
+											"value": "hapikey",
+											"type": "string"
+										},
+										{
+											"key": "value",
+											"value": "{{apiKey}}",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "query",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"active\": \"<boolean>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/webhooks/v3/:appId/subscriptions/:subscriptionId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"webhooks",
+										"v3",
+										":appId",
+										"subscriptions",
+										":subscriptionId"
+									],
+									"variable": [
+										{
+											"key": "appId",
+											"value": "<integer>"
+										},
+										{
+											"key": "subscriptionId",
+											"value": "<integer>"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "successful operation",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"active\": \"<boolean>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/webhooks/v3/:appId/subscriptions/:subscriptionId?hapikey=<API Key>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"webhooks",
+												"v3",
+												":appId",
+												"subscriptions",
+												":subscriptionId"
+											],
+											"query": [
+												{
+													"key": "hapikey",
+													"value": "<API Key>",
+													"description": "Added as a part of security scheme: apikey"
+												}
+											],
+											"variable": [
+												{
+													"key": "appId"
+												},
+												{
+													"key": "subscriptionId"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"active\": \"<boolean>\",\n  \"createdAt\": \"<dateTime>\",\n  \"eventType\": \"deal.propertyChange\",\n  \"id\": \"<string>\",\n  \"propertyName\": \"<string>\",\n  \"updatedAt\": \"<dateTime>\"\n}"
+								},
+								{
+									"name": "An error occurred.",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"active\": \"<boolean>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/webhooks/v3/:appId/subscriptions/:subscriptionId?hapikey=<API Key>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"webhooks",
+												"v3",
+												":appId",
+												"subscriptions",
+												":subscriptionId"
+											],
+											"query": [
+												{
+													"key": "hapikey",
+													"value": "<API Key>",
+													"description": "Added as a part of security scheme: apikey"
+												}
+											],
+											"variable": [
+												{
+													"key": "appId"
+												},
+												{
+													"key": "subscriptionId"
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"category\": \"<string>\",\n  \"correlationId\": \"<uuid>\",\n  \"message\": \"<string>\",\n  \"subCategory\": \"<string>\",\n  \"errors\": [\n    {\n      \"message\": \"<string>\",\n      \"in\": \"<string>\",\n      \"code\": \"<string>\",\n      \"subCategory\": \"<string>\",\n      \"context\": {\n        \"nisi2\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"nisi_bd0\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"ad_a\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    {\n      \"message\": \"<string>\",\n      \"in\": \"<string>\",\n      \"code\": \"<string>\",\n      \"subCategory\": \"<string>\",\n      \"context\": {\n        \"nisidf\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"amet73d\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"in9e\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"Lorem_b47\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    }\n  ],\n  \"context\": {\n    \"ipsum_d00\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"links\": {\n    \"velit__8d\": \"<string>\",\n    \"amet8b\": \"<string>\"\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "get-/webhooks/v3/{app Id}/subscriptions get All",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "key",
+											"value": "hapikey",
+											"type": "string"
+										},
+										{
+											"key": "value",
+											"value": "{{apiKey}}",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "query",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/webhooks/v3/:appId/subscriptions",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"webhooks",
+										"v3",
+										":appId",
+										"subscriptions"
+									],
+									"variable": [
+										{
+											"key": "appId",
+											"value": "<integer>"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "successful operation",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/webhooks/v3/:appId/subscriptions?hapikey=<API Key>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"webhooks",
+												"v3",
+												":appId",
+												"subscriptions"
+											],
+											"query": [
+												{
+													"key": "hapikey",
+													"value": "<API Key>",
+													"description": "Added as a part of security scheme: apikey"
+												}
+											],
+											"variable": [
+												{
+													"key": "appId"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"results\": [\n    {\n      \"active\": \"<boolean>\",\n      \"createdAt\": \"<dateTime>\",\n      \"eventType\": \"deal.restore\",\n      \"id\": \"<string>\",\n      \"propertyName\": \"<string>\",\n      \"updatedAt\": \"<dateTime>\"\n    },\n    {\n      \"active\": \"<boolean>\",\n      \"createdAt\": \"<dateTime>\",\n      \"eventType\": \"line_item.restore\",\n      \"id\": \"<string>\",\n      \"propertyName\": \"<string>\",\n      \"updatedAt\": \"<dateTime>\"\n    }\n  ]\n}"
+								},
+								{
+									"name": "An error occurred.",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/webhooks/v3/:appId/subscriptions?hapikey=<API Key>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"webhooks",
+												"v3",
+												":appId",
+												"subscriptions"
+											],
+											"query": [
+												{
+													"key": "hapikey",
+													"value": "<API Key>",
+													"description": "Added as a part of security scheme: apikey"
+												}
+											],
+											"variable": [
+												{
+													"key": "appId"
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"category\": \"<string>\",\n  \"correlationId\": \"<uuid>\",\n  \"message\": \"<string>\",\n  \"subCategory\": \"<string>\",\n  \"errors\": [\n    {\n      \"message\": \"<string>\",\n      \"in\": \"<string>\",\n      \"code\": \"<string>\",\n      \"subCategory\": \"<string>\",\n      \"context\": {\n        \"nisi2\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"nisi_bd0\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"ad_a\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    {\n      \"message\": \"<string>\",\n      \"in\": \"<string>\",\n      \"code\": \"<string>\",\n      \"subCategory\": \"<string>\",\n      \"context\": {\n        \"nisidf\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"amet73d\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"in9e\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"Lorem_b47\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    }\n  ],\n  \"context\": {\n    \"ipsum_d00\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"links\": {\n    \"velit__8d\": \"<string>\",\n    \"amet8b\": \"<string>\"\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "post-/webhooks/v3/{app Id}/subscriptions create",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "key",
+											"value": "hapikey",
+											"type": "string"
+										},
+										{
+											"key": "value",
+											"value": "{{apiKey}}",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "query",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"eventType\": \"conversation.newMessage\",\n  \"propertyName\": \"<string>\",\n  \"active\": \"<boolean>\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/webhooks/v3/:appId/subscriptions",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"webhooks",
+										"v3",
+										":appId",
+										"subscriptions"
+									],
+									"variable": [
+										{
+											"key": "appId",
+											"value": "<integer>"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "successful operation",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"eventType\": \"conversation.newMessage\",\n  \"propertyName\": \"<string>\",\n  \"active\": \"<boolean>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/webhooks/v3/:appId/subscriptions?hapikey=<API Key>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"webhooks",
+												"v3",
+												":appId",
+												"subscriptions"
+											],
+											"query": [
+												{
+													"key": "hapikey",
+													"value": "<API Key>",
+													"description": "Added as a part of security scheme: apikey"
+												}
+											],
+											"variable": [
+												{
+													"key": "appId"
+												}
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"active\": \"<boolean>\",\n  \"createdAt\": \"<dateTime>\",\n  \"eventType\": \"deal.propertyChange\",\n  \"id\": \"<string>\",\n  \"propertyName\": \"<string>\",\n  \"updatedAt\": \"<dateTime>\"\n}"
+								},
+								{
+									"name": "An error occurred.",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"eventType\": \"conversation.newMessage\",\n  \"propertyName\": \"<string>\",\n  \"active\": \"<boolean>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/webhooks/v3/:appId/subscriptions?hapikey=<API Key>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"webhooks",
+												"v3",
+												":appId",
+												"subscriptions"
+											],
+											"query": [
+												{
+													"key": "hapikey",
+													"value": "<API Key>",
+													"description": "Added as a part of security scheme: apikey"
+												}
+											],
+											"variable": [
+												{
+													"key": "appId"
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"category\": \"<string>\",\n  \"correlationId\": \"<uuid>\",\n  \"message\": \"<string>\",\n  \"subCategory\": \"<string>\",\n  \"errors\": [\n    {\n      \"message\": \"<string>\",\n      \"in\": \"<string>\",\n      \"code\": \"<string>\",\n      \"subCategory\": \"<string>\",\n      \"context\": {\n        \"nisi2\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"nisi_bd0\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"ad_a\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    {\n      \"message\": \"<string>\",\n      \"in\": \"<string>\",\n      \"code\": \"<string>\",\n      \"subCategory\": \"<string>\",\n      \"context\": {\n        \"nisidf\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"amet73d\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"in9e\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"Lorem_b47\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    }\n  ],\n  \"context\": {\n    \"ipsum_d00\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"links\": {\n    \"velit__8d\": \"<string>\",\n    \"amet8b\": \"<string>\"\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "post-/webhooks/v3/{app Id}/subscriptions/batch/update update Batch",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "key",
+											"value": "hapikey",
+											"type": "string"
+										},
+										{
+											"key": "value",
+											"value": "{{apiKey}}",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "query",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"inputs\": [\n    {\n      \"active\": \"<boolean>\",\n      \"id\": \"<integer>\"\n    },\n    {\n      \"active\": \"<boolean>\",\n      \"id\": \"<integer>\"\n    }\n  ]\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/webhooks/v3/:appId/subscriptions/batch/update",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"webhooks",
+										"v3",
+										":appId",
+										"subscriptions",
+										"batch",
+										"update"
+									],
+									"variable": [
+										{
+											"key": "appId",
+											"value": "<integer>"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "successful operation",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"inputs\": [\n    {\n      \"active\": \"<boolean>\",\n      \"id\": \"<integer>\"\n    },\n    {\n      \"active\": \"<boolean>\",\n      \"id\": \"<integer>\"\n    }\n  ]\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/webhooks/v3/:appId/subscriptions/batch/update?hapikey=<API Key>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"webhooks",
+												"v3",
+												":appId",
+												"subscriptions",
+												"batch",
+												"update"
+											],
+											"query": [
+												{
+													"key": "hapikey",
+													"value": "<API Key>",
+													"description": "Added as a part of security scheme: apikey"
+												}
+											],
+											"variable": [
+												{
+													"key": "appId"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"completedAt\": \"<dateTime>\",\n  \"results\": [\n    {\n      \"active\": \"<boolean>\",\n      \"createdAt\": \"<dateTime>\",\n      \"eventType\": \"conversation.privacyDeletion\",\n      \"id\": \"<string>\",\n      \"propertyName\": \"<string>\",\n      \"updatedAt\": \"<dateTime>\"\n    },\n    {\n      \"active\": \"<boolean>\",\n      \"createdAt\": \"<dateTime>\",\n      \"eventType\": \"ticket.creation\",\n      \"id\": \"<string>\",\n      \"propertyName\": \"<string>\",\n      \"updatedAt\": \"<dateTime>\"\n    }\n  ],\n  \"startedAt\": \"<dateTime>\",\n  \"status\": \"PROCESSING\",\n  \"requestedAt\": \"<dateTime>\",\n  \"links\": {\n    \"in_4ae\": \"<string>\",\n    \"voluptate_e\": \"<string>\",\n    \"id4\": \"<string>\"\n  }\n}"
+								},
+								{
+									"name": "multiple statuses",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"inputs\": [\n    {\n      \"active\": \"<boolean>\",\n      \"id\": \"<integer>\"\n    },\n    {\n      \"active\": \"<boolean>\",\n      \"id\": \"<integer>\"\n    }\n  ]\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/webhooks/v3/:appId/subscriptions/batch/update?hapikey=<API Key>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"webhooks",
+												"v3",
+												":appId",
+												"subscriptions",
+												"batch",
+												"update"
+											],
+											"query": [
+												{
+													"key": "hapikey",
+													"value": "<API Key>",
+													"description": "Added as a part of security scheme: apikey"
+												}
+											],
+											"variable": [
+												{
+													"key": "appId"
+												}
+											]
+										}
+									},
+									"status": "Multi-Status (WebDAV) (RFC 4918)",
+									"code": 207,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"completedAt\": \"<dateTime>\",\n  \"results\": [\n    {\n      \"active\": \"<boolean>\",\n      \"createdAt\": \"<dateTime>\",\n      \"eventType\": \"conversation.privacyDeletion\",\n      \"id\": \"<string>\",\n      \"propertyName\": \"<string>\",\n      \"updatedAt\": \"<dateTime>\"\n    },\n    {\n      \"active\": \"<boolean>\",\n      \"createdAt\": \"<dateTime>\",\n      \"eventType\": \"line_item.propertyChange\",\n      \"id\": \"<string>\",\n      \"propertyName\": \"<string>\",\n      \"updatedAt\": \"<dateTime>\"\n    }\n  ],\n  \"startedAt\": \"<dateTime>\",\n  \"status\": \"COMPLETE\",\n  \"numErrors\": \"<integer>\",\n  \"errors\": [\n    {\n      \"category\": \"<string>\",\n      \"context\": {\n        \"velit5\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"nulla9\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      \"errors\": [\n        {\n          \"message\": \"<string>\",\n          \"in\": \"<string>\",\n          \"code\": \"<string>\",\n          \"subCategory\": \"<string>\",\n          \"context\": {\n            \"consequat_ee\": [\n              \"<string>\",\n              \"<string>\"\n            ]\n          }\n        },\n        {\n          \"message\": \"<string>\",\n          \"in\": \"<string>\",\n          \"code\": \"<string>\",\n          \"subCategory\": \"<string>\",\n          \"context\": {\n            \"sunt_9\": [\n              \"<string>\",\n              \"<string>\"\n            ],\n            \"deserunt_1\": [\n              \"<string>\",\n              \"<string>\"\n            ],\n            \"et__b\": [\n              \"<string>\",\n              \"<string>\"\n            ]\n          }\n        }\n      ],\n      \"links\": {\n        \"eu7f\": \"<string>\",\n        \"exd\": \"<string>\"\n      },\n      \"message\": \"<string>\",\n      \"status\": \"<string>\",\n      \"id\": \"<string>\",\n      \"subCategory\": {}\n    },\n    {\n      \"category\": \"<string>\",\n      \"context\": {\n        \"sed_0_\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      },\n      \"errors\": [\n        {\n          \"message\": \"<string>\",\n          \"in\": \"<string>\",\n          \"code\": \"<string>\",\n          \"subCategory\": \"<string>\",\n          \"context\": {\n            \"ut_9\": [\n              \"<string>\",\n              \"<string>\"\n            ],\n            \"qui9\": [\n              \"<string>\",\n              \"<string>\"\n            ],\n            \"minim_c5\": [\n              \"<string>\",\n              \"<string>\"\n            ]\n          }\n        },\n        {\n          \"message\": \"<string>\",\n          \"in\": \"<string>\",\n          \"code\": \"<string>\",\n          \"subCategory\": \"<string>\",\n          \"context\": {\n            \"culpa_c2\": [\n              \"<string>\",\n              \"<string>\"\n            ],\n            \"enim7e_\": [\n              \"<string>\",\n              \"<string>\"\n            ]\n          }\n        }\n      ],\n      \"links\": {\n        \"aliquip14\": \"<string>\",\n        \"doloreb\": \"<string>\",\n        \"sit_12\": \"<string>\",\n        \"Duis_81d\": \"<string>\"\n      },\n      \"message\": \"<string>\",\n      \"status\": \"<string>\",\n      \"id\": \"<string>\",\n      \"subCategory\": {}\n    }\n  ],\n  \"requestedAt\": \"<dateTime>\",\n  \"links\": {\n    \"est__e\": \"<string>\",\n    \"esse_5\": \"<string>\",\n    \"inb9\": \"<string>\"\n  }\n}"
+								},
+								{
+									"name": "An error occurred.",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"inputs\": [\n    {\n      \"active\": \"<boolean>\",\n      \"id\": \"<integer>\"\n    },\n    {\n      \"active\": \"<boolean>\",\n      \"id\": \"<integer>\"\n    }\n  ]\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/webhooks/v3/:appId/subscriptions/batch/update?hapikey=<API Key>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"webhooks",
+												"v3",
+												":appId",
+												"subscriptions",
+												"batch",
+												"update"
+											],
+											"query": [
+												{
+													"key": "hapikey",
+													"value": "<API Key>",
+													"description": "Added as a part of security scheme: apikey"
+												}
+											],
+											"variable": [
+												{
+													"key": "appId"
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"category\": \"<string>\",\n  \"correlationId\": \"<uuid>\",\n  \"message\": \"<string>\",\n  \"subCategory\": \"<string>\",\n  \"errors\": [\n    {\n      \"message\": \"<string>\",\n      \"in\": \"<string>\",\n      \"code\": \"<string>\",\n      \"subCategory\": \"<string>\",\n      \"context\": {\n        \"nisi2\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"nisi_bd0\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"ad_a\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    },\n    {\n      \"message\": \"<string>\",\n      \"in\": \"<string>\",\n      \"code\": \"<string>\",\n      \"subCategory\": \"<string>\",\n      \"context\": {\n        \"nisidf\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"amet73d\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"in9e\": [\n          \"<string>\",\n          \"<string>\"\n        ],\n        \"Lorem_b47\": [\n          \"<string>\",\n          \"<string>\"\n        ]\n      }\n    }\n  ],\n  \"context\": {\n    \"ipsum_d00\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"links\": {\n    \"velit__8d\": \"<string>\",\n    \"amet8b\": \"<string>\"\n  }\n}"
+								}
+							]
+						}
+					]
+				}
+			],
+			"description": "Provides a way for apps to subscribe to certain change events in HubSpot. Once configured, apps will receive event payloads containing details about the changes at a specified target URL. There can only be one target URL for receiving event notifications per app.",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.request.headers.add( { key: \"X-HS-POSTMAN\", value: pm.execution.location.join() } );"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.request.headers.add( { key: \"X-HS-POSTMAN\", value: pm.execution.location.join() } );"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://api.hubapi.com"
+		}
+	]
+}
