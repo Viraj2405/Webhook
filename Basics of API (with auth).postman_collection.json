@@ -1,0 +1,64 @@
+{
+	"info": {
+		"_postman_id": "93bf6239-80c1-4531-b367-f0a809103ba2",
+		"name": "Basics of API (with auth)",
+		"description": "We are using `Basic Auth` here (username and password)\n\nEnd Point: https://joke-auth.herokuapp.com/\n\nResource Path:\n\n`base_url`: {{url from notebook}}\n\n`base_url/joke`: Get Jokes.\n\n`base_url/adjoke`: Add, Delete, and Update joke. \n\nTodo:\n\n1. Add `Variable` on Collection Level for base_url, Username, and Password.\n2. Add `POST` Request.\n3. Add `DELETE` Request.\n4. Add `PUT` Request. \n\nThe Body for POST and PUT is like this \n```JSON\n{\n  \"id\":10,\n  \"author\": \"NA\",\n  \"joke\": \"Bugs are features\",\n  \"source\": \"Ali Mustufa\"\n}\n```\nInclude id in the URL like /joke/10 where 10 is the id of the joke for `DELETE` Request\n\nRemember: You'll need to authenticate yourself for adding, updating, and deleting the jokes from the server.\n\nNote: This is a beginner-friendly API development tutorial and doesn't follow best practices.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40386055"
+	},
+	"item": [
+		{
+			"name": "Get Data",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Add your URL from the NOTEBOOK}}/joke",
+					"host": [
+						"{{Add your URL from the NOTEBOOK}}"
+					],
+					"path": [
+						"joke"
+					]
+				},
+				"description": "\n```\nusername: public\npassword: public\n```"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
