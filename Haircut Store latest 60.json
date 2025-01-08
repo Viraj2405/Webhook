@@ -39,7 +39,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{_server}}/service",
+							"raw": "{{_server}}/service/abcd",
 							"host": [
 								"{{_server}}"
 							],
