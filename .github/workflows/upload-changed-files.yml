@@ -1,0 +1,63 @@
+name: Upload Changed Files
+
+on:
+  push:
+    branches:
+      - main  # or any branch you want
+
+env:
+  GIT_REPO: https://github.com/your-org/your-repo.git  # optional if using actions/checkout
+  GIT_BRANCH: main
+  UPLOAD_API_URL: https://your-upload-api-url.com  # replace with your real endpoint
+  APPKEYTOKEN: 78e34aa639b94a8a5be22942b33e02f8
+  PROJECT_ID: 41a7c1b1-e88d-4688-b61b-5bcd2e86abb3
+
+jobs:
+  upload-changed-files:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # So we can see commit history
+
+      - name: Identify Changed Files
+        id: changes
+        shell: pwsh
+        run: |
+          git fetch origin $env:GIT_BRANCH
+          $changed = git diff --name-only HEAD~1 HEAD
+          
+          if (-not $changed) {
+            throw "No files changed in the latest commit!"
+          }
+
+          $changedList = $changed -split "`r?`n" | Where-Object { $_ -ne "" }
+          $changedList | ForEach-Object { Write-Host "Changed file: $_" }
+
+          echo "CHANGED_FILES<<EOF" >> $env:GITHUB_ENV
+          $changedList | ForEach-Object { echo $_ } >> $env:GITHUB_ENV
+          echo "EOF" >> $env:GITHUB_ENV
+
+      - name: Upload Changed Files
+        shell: pwsh
+        run: |
+          $files = $env:CHANGED_FILES -split "`r?`n" | Where-Object { $_ -ne "" }
+          foreach ($file in $files) {
+            if (Test-Path $file) {
+              Write-Host "Uploading $file..."
+              $response = Invoke-RestMethod -Uri "$env:UPLOAD_API_URL" -Method Post -Form @{
+                file = Get-Item $file
+                secret_key = "$env:APPKEYTOKEN"
+                project_id = "$env:PROJECT_ID"
+              }
+              Write-Host "Upload response: $($response | ConvertTo-Json -Depth 5)"
+            } else {
+              Write-Host "File not found: $file"
+            }
+          }
+
+      - name: Post-processing
+        run: echo "Upload stage completed."
+
