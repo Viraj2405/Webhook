@@ -1,0 +1,49 @@
+name: Run Security Scan
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  SECURITY_SCAN_API: https://7aab-45-252-74-134.ngrok-free.app/v1/startSecurityScan
+  APPKEYTOKEN: 78e34aa639b94a8a5be22942b33e02f8
+  PROJECT_ID: 41a7c1b1-e88d-4688-b61b-5bcd2e86abb3
+
+jobs:
+  security-scan:
+    runs-on: windows-latest
+
+    steps:
+      - name: Run Security Scan API
+        shell: pwsh
+        run: |
+          Write-Host "Calling Security Scan API..."
+
+          $jsonPayload = '{"project_id": "' + $env:PROJECT_ID + '"}'
+
+          $scanResponse = curl --location --request POST $env:SECURITY_SCAN_API `
+            --header "Content-Type: application/json" `
+            --data-raw $jsonPayload
+
+          $responseText = $scanResponse.Content
+          Write-Host "Scan Response: $responseText"
+
+          # Parse 'posture' and 'message' using regex
+          $postureMatch = [regex]::Match($responseText, '"posture"\s*:\s*"([^"]+)"')
+          $messageMatch = [regex]::Match($responseText, '"message"\s*:\s*"([^"]+)"')
+
+          $posture = if ($postureMatch.Success) { $postureMatch.Groups[1].Value } else { "" }
+          $message = if ($messageMatch.Success) { $messageMatch.Groups[1].Value } else { "" }
+
+          Write-Host "Posture: $posture"
+          Write-Host "Message: $message"
+
+          if ($posture -eq "High" -or $posture -eq "Critical") {
+            throw "Pipeline Blocked due to posture: $posture"
+          } else {
+            Write-Host "Pipeline Continued. Posture: $posture"
+          }
+
+      - name: Post-processing
+        run: echo "Post-processing steps completed."
