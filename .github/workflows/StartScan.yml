@@ -22,16 +22,25 @@ jobs:
 
           $jsonPayload = '{"project_id": "' + $env:PROJECT_ID + '"}'
 
-          $scanResponse = curl --location --request POST $env:SECURITY_SCAN_API `
-            --header "Content-Type: application/json" `
-            --data-raw $jsonPayload
+          # Build the curl command (for logging/debugging)
+          $curlCmd = 'curl --location --request POST "' + $env:SECURITY_SCAN_API + '" ' +
+                     '--header "Content-Type: application/json" ' +
+                     '--data-raw "' + $jsonPayload + '"'
 
-          $responseText = $scanResponse.Content
-          Write-Host "Scan Response: $responseText"
+          Write-Host "🧪 Curl Command:"
+          Write-Host $curlCmd
+          Write-Host "Executing curl..."
+
+          # Execute curl and capture the raw response
+          $response = & curl.exe --location --request POST "$env:SECURITY_SCAN_API" `
+            --header "Content-Type: application/json" `
+            --data-raw "$jsonPayload"
+
+          Write-Host "Scan Response: $response"
 
           # Parse 'posture' and 'message' using regex
-          $postureMatch = [regex]::Match($responseText, '"posture"\s*:\s*"([^"]+)"')
-          $messageMatch = [regex]::Match($responseText, '"message"\s*:\s*"([^"]+)"')
+          $postureMatch = [regex]::Match($response, '"posture"\s*:\s*"([^"]+)"')
+          $messageMatch = [regex]::Match($response, '"message"\s*:\s*"([^"]+)"')
 
           $posture = if ($postureMatch.Success) { $postureMatch.Groups[1].Value } else { "" }
           $message = if ($messageMatch.Success) { $messageMatch.Groups[1].Value } else { "" }
@@ -40,9 +49,9 @@ jobs:
           Write-Host "Message: $message"
 
           if ($posture -eq "High" -or $posture -eq "Critical") {
-            throw "Pipeline Blocked due to posture: $posture"
+            throw "❌ Pipeline Blocked due to posture: $posture"
           } else {
-            Write-Host "Pipeline Continued. Posture: $posture"
+            Write-Host "✅ Pipeline Continued. Posture: $posture"
           }
 
       - name: Post-processing
