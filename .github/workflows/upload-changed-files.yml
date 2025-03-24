@@ -20,7 +20,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # So we can see commit history
 
       - name: Identify Changed Files
         id: changes
@@ -45,10 +45,18 @@ jobs:
             if (Test-Path $file) {
               Write-Host "Uploading $file..."
 
+              # Escape the file path for curl
               $escapedFile = $file -replace '"', '\"'
-              $cmd = "curl --location `"$env:UPLOAD_API_URL`" --form `"file=@`"$escapedFile`"`" --form `"secret_key=$env:APPKEYTOKEN`" --form `"project_id=$env:PROJECT_ID`""
 
-              Write-Host "Running curl for file: $file"
+              # Construct and run the curl command properly
+              $cmd = 'curl --location "' + $env:UPLOAD_API_URL + '" ' +
+                     '--form "file=@' + $escapedFile + '" ' +
+                     '--form "secret_key=' + $env:APPKEYTOKEN + '" ' +
+                     '--form "project_id=' + $env:PROJECT_ID + '"'
+
+              Write-Host "Running curl command:"
+              Write-Host $cmd
+
               iex $cmd
             } else {
               Write-Host "File not found (skipping): $file"
