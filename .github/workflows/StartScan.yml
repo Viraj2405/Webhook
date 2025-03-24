@@ -50,7 +50,9 @@ jobs:
 
           if ($posture -eq "High" -or $posture -eq "Critical") {
             throw "❌ Pipeline Blocked due to posture: $posture"
-          } else {
+          } else if ($posture -eq ""{
+            throw "❌ Pipeline Blocked. Invalid Posture"
+          } {
             Write-Host "✅ Pipeline Continued. Posture: $posture"
           }
 
