@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  SECURITY_SCAN_API: https://0858-45-252-74-134.ngrok-free.app/v1/startSecurityScan
+  SECURITY_SCAN_API_BASE: https://0858-45-252-74-134.ngrok-free.app/v1/startSecurityScan
   APPKEYTOKEN: 78e34aa639b94a8a5be22942b33e02f8
   PROJECT_ID: 41a7c1b1-e88d-4688-b61b-5bcd2e86abb3
 
@@ -20,21 +20,23 @@ jobs:
         run: |
           Write-Host "Calling Security Scan API..."
 
-          $jsonPayload = '{"project_id": "' + $env:PROJECT_ID + '"}'
+          # Build full URL with project_id in the path
+          $apiUrl = "$env:SECURITY_SCAN_API_BASE/$env:PROJECT_ID"
 
-          # Build the curl command (for logging/debugging)
-          $curlCmd = 'curl --location --request POST "' + $env:SECURITY_SCAN_API + '" ' +
-                     '--header "Content-Type: application/json" ' +
-                     '--data-raw "' + $jsonPayload + '"'
+          # Show final URL for debugging
+          Write-Host "Final API URL: $apiUrl"
+
+          # If you still want to send an empty body or headers, you can do that here
+          $curlCmd = 'curl --location --request POST "' + $apiUrl + '" ' +
+                     '--header "Content-Type: application/json"'
 
           Write-Host "🧪 Curl Command:"
           Write-Host $curlCmd
           Write-Host "Executing curl..."
 
-          # Execute curl and capture the raw response
-          $response = & curl.exe --location --request POST "$env:SECURITY_SCAN_API" `
-            --header "Content-Type: application/json" `
-            --data-raw "$jsonPayload"
+          # Run curl
+          $response = & curl.exe --location --request POST $apiUrl `
+            --header "Content-Type: application/json"
 
           Write-Host "Scan Response: $response"
 
@@ -50,7 +52,7 @@ jobs:
 
           if ($posture -eq "High" -or $posture -eq "Critical") {
             throw "❌ Pipeline Blocked due to posture: $posture"
-          } elseif ($posture -eq ""){
+          } elseif ($posture -eq "") {
             throw "❌ Pipeline Blocked. Invalid Posture"
           } else {
             Write-Host "✅ Pipeline Continued. Posture: $posture"
