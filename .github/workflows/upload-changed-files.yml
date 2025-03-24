@@ -3,7 +3,7 @@ name: Upload Changed Files
 on:
   push:
     branches:
-      - main  # or any branch you want
+      - main
 
 env:
   GIT_REPO: https://github.com/Viraj2405/Webhook.git
@@ -20,7 +20,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # So we can see commit history
+          fetch-depth: 0
 
       - name: Identify Changed Files
         id: changes
@@ -28,15 +28,11 @@ jobs:
         run: |
           git fetch origin $env:GIT_BRANCH
           $changed = git diff --name-only HEAD~1 HEAD
-
           if (-not $changed) {
             throw "No files changed in the latest commit!"
           }
-
           $changedList = $changed -split "`r?`n" | Where-Object { $_ -ne "" }
           $changedList | ForEach-Object { Write-Host "Changed file: $_" }
-
-          # Save changed files to GitHub env
           "CHANGED_FILES<<EOF" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           $changedList | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           "EOF" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
@@ -49,18 +45,13 @@ jobs:
             if (Test-Path $file) {
               Write-Host "Uploading $file..."
 
-              $fileStream = [System.IO.FileStream]::new($file, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read)
+              $escapedFile = $file -replace '"', '\"'
+              $cmd = "curl --location `"$env:UPLOAD_API_URL`" --form `"file=@`"$escapedFile`"`" --form `"secret_key=$env:APPKEYTOKEN`" --form `"project_id=$env:PROJECT_ID`""
 
-              $response = Invoke-RestMethod -Uri "$env:UPLOAD_API_URL" -Method Post -Form @{
-                file = $fileStream
-                secret_key = "$env:APPKEYTOKEN"
-                project_id = "$env:PROJECT_ID"
-              }
-
-              Write-Host "Upload response: $($response | ConvertTo-Json -Depth 5)"
-              $fileStream.Close()
+              Write-Host "Running curl for file: $file"
+              iex $cmd
             } else {
-              Write-Host "File not found: $file"
+              Write-Host "File not found (skipping): $file"
             }
           }
 
