@@ -52,7 +52,7 @@ jobs:
             throw "❌ Pipeline Blocked due to posture: $posture"
           } else if ($posture -eq ""{
             throw "❌ Pipeline Blocked. Invalid Posture"
-          } {
+          } else {
             Write-Host "✅ Pipeline Continued. Posture: $posture"
           }
 
