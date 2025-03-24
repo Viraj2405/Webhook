@@ -6,9 +6,9 @@ on:
       - main  # or any branch you want
 
 env:
-  GIT_REPO: https://github.com/your-org/your-repo.git  # optional if using actions/checkout
+  GIT_REPO: https://github.com/Viraj2405/Webhook.git
   GIT_BRANCH: main
-  UPLOAD_API_URL: https://your-upload-api-url.com  # replace with your real endpoint
+  UPLOAD_API_URL: https://0858-45-252-74-134.ngrok-free.app/v1/webHook
   APPKEYTOKEN: 78e34aa639b94a8a5be22942b33e02f8
   PROJECT_ID: 41a7c1b1-e88d-4688-b61b-5bcd2e86abb3
 
