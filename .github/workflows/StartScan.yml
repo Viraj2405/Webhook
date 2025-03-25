@@ -39,7 +39,9 @@ jobs:
             --header "Content-Type: application/json"
 
           Write-Host "Scan Response: $response"
-
+          if ($response -match '"message"\s*:\s*"token expired"') {
+          throw "❌ Token expired. Pipeline blocked immediately."
+          }
           # Parse 'posture' and 'message' using regex
           $postureMatch = [regex]::Match($response, '"posture"\s*:\s*"([^"]+)"')
           $messageMatch = [regex]::Match($response, '"message"\s*:\s*"([^"]+)"')
