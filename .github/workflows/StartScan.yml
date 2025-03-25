@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  SECURITY_SCAN_API_BASE: https://0858-45-252-74-134.ngrok-free.app/v1/startSecurityScan
+  SECURITY_SCAN_API_BASE: https://2501-114-143-234-6.ngrok-free.app/v1/startSecurityScan
   APPKEYTOKEN: 78e34aa639b94a8a5be22942b33e02f8
   PROJECT_ID: 41a7c1b1-e88d-4688-b61b-5bcd2e86abb3
 
