@@ -56,7 +56,7 @@ jobs:
           $low      = Extract-Count 'lowCount'
           $info     = Extract-Count 'informationalCount'
 
-          Write-Host "🔍 Severity Summary:"
+          Write-Host "Severity Summary:"
           Write-Host "Critical: $critical"
           Write-Host "High: $high"
           Write-Host "Medium: $medium"
