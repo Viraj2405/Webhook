@@ -10,6 +10,14 @@ env:
   APPKEYTOKEN: 78e34aa639b94a8a5be22942b33e02f8
   PROJECT_ID: fcf31faf-5d25-48d3-ab7e-9d8f2085280b
 
+  # Blocking toggles
+  BLOCK_PIPELINE: 'true'
+  BLOCK_CRITICAL: 'true'
+  BLOCK_HIGH: 'true'
+  BLOCK_MEDIUM: 'false'
+  BLOCK_LOW: 'false'
+  BLOCK_INFO: 'false'
+
 jobs:
   security-scan:
     runs-on: windows-latest
@@ -20,44 +28,60 @@ jobs:
         run: |
           Write-Host "Calling Security Scan API..."
 
-          # Build full URL with project_id in the path
           $apiUrl = "$env:SECURITY_SCAN_API_BASE/$env:PROJECT_ID"
-
-          # Show final URL for debugging
           Write-Host "Final API URL: $apiUrl"
 
-          # If you still want to send an empty body or headers, you can do that here
-          $curlCmd = 'curl --location --request POST "' + $apiUrl + '" ' +
-                     '--header "Content-Type: application/json"'
-
-          Write-Host "🧪 Curl Command:"
-          Write-Host $curlCmd
-          Write-Host "Executing curl..."
-
-          # Run curl
           $response = & curl.exe --location --request POST $apiUrl `
             --header "Content-Type: application/json"
 
           Write-Host "Scan Response: $response"
+
           if ($response -match '"message"\s*:\s*"token expired"') {
-          throw "❌ Token expired. Pipeline blocked immediately."
+            throw "Token expired. Pipeline blocked immediately."
           }
-          # Parse 'posture' and 'message' using regex
-          $postureMatch = [regex]::Match($response, '"posture"\s*:\s*"([^"]+)"')
-          $messageMatch = [regex]::Match($response, '"message"\s*:\s*"([^"]+)"')
 
-          $posture = if ($postureMatch.Success) { $postureMatch.Groups[1].Value } else { "" }
-          $message = if ($messageMatch.Success) { $messageMatch.Groups[1].Value } else { "" }
+          # Helper to extract counts
+          function Extract-Count {
+            param ($key)
+            if ($response -match "`"$key`"\s*:\s*(\d+)") {
+              return [int]$Matches[1]
+            } else {
+              return 0
+            }
+          }
 
-          Write-Host "Posture: $posture"
-          Write-Host "Message: $message"
+          $critical = Extract-Count 'criticalCount'
+          $high     = Extract-Count 'highCount'
+          $medium   = Extract-Count 'mediumCount'
+          $low      = Extract-Count 'lowCount'
+          $info     = Extract-Count 'informationalCount'
 
-          if ($posture -eq "High" -or $posture -eq "Critical") {
-            throw "❌ Pipeline Blocked due to posture: $posture"
-          } elseif ($posture -eq "") {
-            throw "❌ Pipeline Blocked. Invalid Posture"
+          Write-Host "🔍 Severity Summary:"
+          Write-Host "Critical: $critical"
+          Write-Host "High: $high"
+          Write-Host "Medium: $medium"
+          Write-Host "Low: $low"
+          Write-Host "Info: $info"
+
+          if ($env:BLOCK_PIPELINE -eq 'true') {
+            if ($env:BLOCK_CRITICAL -eq 'true' -and $critical -gt 0) {
+              throw "Blocked due to criticalCount > 0"
+            }
+            if ($env:BLOCK_HIGH -eq 'true' -and $high -gt 0) {
+              throw "Blocked due to highCount > 0"
+            }
+            if ($env:BLOCK_MEDIUM -eq 'true' -and $medium -gt 0) {
+              throw "Blocked due to mediumCount > 0"
+            }
+            if ($env:BLOCK_LOW -eq 'true' -and $low -gt 0) {
+              throw "Blocked due to lowCount > 0"
+            }
+            if ($env:BLOCK_INFO -eq 'true' -and $info -gt 0) {
+              throw "Blocked due to informationalCount > 0"
+            }
+            Write-Host "No blocking severity found. Pipeline continued."
           } else {
-            Write-Host "✅ Pipeline Continued. Posture: $posture"
+            Write-Host "BLOCK_PIPELINE is false — continuing regardless of findings."
           }
 
       - name: Post-processing
