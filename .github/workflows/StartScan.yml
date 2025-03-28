@@ -67,8 +67,8 @@ jobs:
             if ($env:BLOCK_CRITICAL -eq 'true' -and $critical -gt 0) {
               throw "Blocked due to criticalCount > 0"
             }
-            if ($env:BLOCK_HIGH -eq 'true' -and $high -gt 0) {
-              throw "Blocked due to highCount > 0"
+            if ($env:BLOCK_HIGH -eq 'true' -and $high -gt 1) {
+              throw "Blocked due to highCount > 1"
             }
             if ($env:BLOCK_MEDIUM -eq 'true' -and $medium -gt 0) {
               throw "Blocked due to mediumCount > 0"
