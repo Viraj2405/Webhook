@@ -14,7 +14,7 @@ env:
   BLOCK_PIPELINE: 'true'
   BLOCK_CRITICAL: 'true'
   BLOCK_HIGH: 'true'
-  BLOCK_MEDIUM: 'false'
+  BLOCK_MEDIUM: 'true'
   BLOCK_LOW: 'false'
   BLOCK_INFO: 'false'
 
