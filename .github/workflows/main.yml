@@ -1,0 +1,87 @@
+name: Run Security Scan
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  SECURITY_SCAN_API_BASE: https://cf9b-45-252-74-134.ngrok-free.app/v1/startSecurityScan
+  APPKEYTOKEN: aa15ca51a98ea1761a18d73b581eeb78
+  PROJECT_ID: 88b4f7e6-0ce0-4930-bc97-d17d4c8b548c
+  # Blocking toggles
+  BLOCK_PIPELINE: 'true'
+  BLOCK_CRITICAL: 'true'
+  BLOCK_HIGH: 'true'
+  BLOCK_MEDIUM: 'false'
+  BLOCK_LOW: 'false'
+  BLOCK_INFO: 'false'
+
+jobs:
+  security-scan:
+    runs-on: windows-latest
+
+    steps:
+      - name: Run Security Scan API
+        shell: pwsh
+        run: |
+          Write-Host "Calling Security Scan API..."
+
+          $apiUrl = "$env:SECURITY_SCAN_API_BASE/$env:PROJECT_ID"
+          Write-Host "Final API URL: $apiUrl"
+
+          $response = & curl.exe --location --request POST $apiUrl `
+            --header "Content-Type: application/json"
+
+          Write-Host "Scan Response: $response"
+
+          if ($response -match '"message"\s*:\s*"token expired"') {
+            throw "Token expired. Pipeline blocked immediately."
+          }
+
+          # Helper to extract counts
+          function Extract-Count {
+            param ($key)
+            if ($response -match "`"$key`"\s*:\s*(\d+)") {
+              return [int]$Matches[1]
+            } else {
+              return 0
+            }
+          }
+
+          $critical = Extract-Count 'criticalCount'
+          $high     = Extract-Count 'highCount'
+          $medium   = Extract-Count 'mediumCount'
+          $low      = Extract-Count 'lowCount'
+          $info     = Extract-Count 'informationalCount'
+
+          Write-Host "Severity Summary:"
+          Write-Host "Critical: $critical"
+          Write-Host "High: $high"
+          Write-Host "Medium: $medium"
+          Write-Host "Low: $low"
+          Write-Host "Info: $info"
+
+          if ($env:BLOCK_PIPELINE -eq 'true') {
+            if ($env:BLOCK_CRITICAL -eq 'true' -and $critical -gt 0) {
+              throw "Blocked due to criticalCount > 0"
+            }
+            if ($env:BLOCK_HIGH -eq 'true' -and $high -gt 0) {
+              throw "Blocked due to highCount > 0"
+            }
+            if ($env:BLOCK_MEDIUM -eq 'true' -and $medium -gt 0) {
+              throw "Blocked due to mediumCount > 0"
+            }
+            if ($env:BLOCK_LOW -eq 'true' -and $low -gt 0) {
+              throw "Blocked due to lowCount > 0"
+            }
+            if ($env:BLOCK_INFO -eq 'true' -and $info -gt 0) {
+              throw "Blocked due to informationalCount > 0"
+            }
+            Write-Host "No blocking severity found. Pipeline continued."
+          } else {
+            Write-Host "BLOCK_PIPELINE is false — continuing regardless of findings."
+          }
+
+      - name: Post-processing
+        run: echo "Post-processing steps completed."
