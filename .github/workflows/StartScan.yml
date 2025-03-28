@@ -6,9 +6,9 @@ on:
       - main
 
 env:
-  SECURITY_SCAN_API_BASE: http://103.81.38.252:9090/app-view/v1/startSecurityScan
-  APPKEYTOKEN: 3a3078f82d03897b122fc2b40f67ef02
-  PROJECT_ID: 02293679-0758-4170-aa86-bf5c622ca70a
+  SECURITY_SCAN_API_BASE: https://cf9b-45-252-74-134.ngrok-free.app/v1/startSecurityScan
+  APPKEYTOKEN: aa15ca51a98ea1761a18d73b581eeb78
+  PROJECT_ID: 88b4f7e6-0ce0-4930-bc97-d17d4c8b548c
 
   # Blocking toggles
   BLOCK_PIPELINE: 'true'
