@@ -4,9 +4,9 @@ trigger:
       - main
       
 variables:
-  SECURITY_SCAN_API_BASE: 'https://523e-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
-  APPKEYTOKEN: '78e34aa639b94a8a5be22942b33e02f8'
-  PROJECT_ID: '41a7c1b1-e88d-4688-b61b-5bcd2e86abb3'
+  SECURITY_SCAN_API_BASE: 'https://d180-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
+  APPKEYTOKEN: '8654cc52fb15262e5c21d1051746f1c4'
+  PROJECT_ID: 'e93c5b75-526b-4ade-9bb7-6833a9fdeedc'
 
   BLOCK_PIPELINE: 'true'
   BLOCK_CRITICAL: 'true'
