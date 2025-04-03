@@ -2,7 +2,7 @@ trigger:
   branches:
     include:
       - main
-
+      
 variables:
   SECURITY_SCAN_API_BASE: 'https://523e-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
   APPKEYTOKEN: '78e34aa639b94a8a5be22942b33e02f8'
@@ -35,7 +35,7 @@ steps:
         Write-Host "Scan Response: $response"
 
         if ($response -match '"message"\s*:\s*"token expired"') {
-          throw "❌ Token expired. Blocking pipeline."
+          throw "Token expired. Blocking pipeline."
         }
 
         function Extract-Count {
