@@ -8,7 +8,7 @@ on:
 env:
   SECURITY_SCAN_API_BASE: 'test.bugdazz.com/v1/startSecurityScan'
   PROJECT_ID: 'a3089edd-2207-4875-9f3b-6415afa56bb2'
-  INTEGRATION_ID: '89451f9e-1398-44ca-a669-886eee168ab4'
+  INTEGRATION_ID: '89c6c30a-2432-49f2-80b5-149151f28c4d'
 
   BLOCK_PIPELINE: 'true'
   BLOCK_CRITICAL: 'true'
@@ -44,16 +44,16 @@ jobs:
 
           function Extract-Count {
             param ([string]$key)
-            if ($responseJson -match "\"$key\"\s*:\s*(\d+)") {
+            if ($responseJson -match ('"' + $key + '"\s*:\s*(\d+)')) {
               return [int]$Matches[1]
             } else {
               return 0
             }
           }
 
-          $critical = Extract-Count 'criticalCount'
-          $high     = Extract-Count 'highCount'
-          $medium   = Extract-Count 'mediumCount'
+          $critical = $response.criticalCount
+          $high     = $response.highCount
+          $medium   = $response.mediumCount
 
           Write-Host "Severity Summary:"
           Write-Host "Critical: $critical"
