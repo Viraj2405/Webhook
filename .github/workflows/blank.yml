@@ -9,7 +9,7 @@ jobs:
   security-scan:
     runs-on: ubuntu-latest
     env:
-      securityScanApi: https://06c2-45-252-74-134.ngrok-free.app/v1/startSecurityScan
+      securityScanApi: https://969f-114-143-234-6.ngrok-free.app/v1/startSecurityScan
       projectId: a3089edd-2207-4875-9f3b-6415afa56bb2
       integrationId: 48703a56-9478-46ea-b919-579933ca14b4
       blockPipeline: true
