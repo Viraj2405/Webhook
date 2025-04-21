@@ -7,16 +7,16 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  securityScanApi: 'https://969f-114-143-234-6.ngrok-free.app/v1/startSecurityScan'
+  securityScanApi: 'https://12a7-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
   projectId: 'a3089edd-2207-4875-9f3b-6415afa56bb2'
   integrationId: 'c90a80bb-514e-4f9c-9b5a-155c8e3f32ae'
   blockPipeline: 'true'
   blockCritical: 'true'
   blockHigh: 'true'
   blockMedium: 'true'
-  criticalThreshold: 6
-  highThreshold: 5
-  mediumThreshold: 4
+  criticalThreshold: '6'
+  highThreshold: '5'
+  mediumThreshold: '4'
 
 stages:
 - stage: SecurityScan
@@ -61,7 +61,6 @@ stages:
           echo "No thresholds exceeded. Proceeding."
         else
           echo "Blocking disabled. Proceeding regardless of severity."
-        fi
       displayName: 'Run Security Scan'
 
 - stage: PostProcessing
