@@ -1,0 +1,121 @@
+name: Run Security
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  SECURITY_SCAN_API_BASE: https://cf9b-45-252-74-134.ngrok-free.app/v1/startSecurityScan
+  PROJECT_ID: 2e68b81e-d8c4-4e57-acd2-5127f1cc95db
+  GIT_REPO: https://github.com/Viraj2405/Webhook.git
+  GIT_BRANCH: main
+  UPLOAD_API_URL:  https://6b2e-45-252-74-134.ngrok-free.app/webhook
+
+  # Blocking toggles
+  BLOCK_PIPELINE: 'true'
+  BLOCK_CRITICAL: 'true'
+  BLOCK_HIGH: 'true'
+  BLOCK_MEDIUM: 'true'
+  BLOCK_LOW: 'false'
+  BLOCK_INFO: 'false'
+
+jobs:
+  security-scan:
+    runs-on: windows-latest
+
+    steps:
+      - name: Clone Repository
+        shell: pwsh
+        run: |
+          if (Test-Path -Path "repo") {
+            Write-Host "Repository already exists, pulling latest changes..."
+            Set-Location -Path "repo"
+            git pull origin $env:GIT_BRANCH
+            Set-Location -Path ".."
+          } else {
+            Write-Host "Cloning repository..."
+            git clone -b $env:GIT_BRANCH $env:GIT_REPO repo
+          }
+
+      - name: Upload Changed Files
+        shell: pwsh
+        run: |
+          $uploadUrl = "$env:UPLOAD_API_URL"
+          $projectId = "$env:PROJECT_ID"
+          $repoPath = "repo"
+
+          if (Test-Path -Path $repoPath) {
+            Write-Host "Uploading files from $repoPath..."
+            $form = @{
+              "file" = Get-Item -Path $repoPath
+              "project_id" = $projectId
+            }
+            Invoke-RestMethod -Uri $uploadUrl -Method Post -Form $form
+          } else {
+            Write-Host "Repository path '$repoPath' does not exist."
+          }
+
+      - name: Run Security Scan API
+        shell: pwsh
+        run: |
+          Write-Host "Calling Security Scan API..."
+
+          $apiUrl = "$env:SECURITY_SCAN_API_BASE/$env:PROJECT_ID"
+          Write-Host "Final API URL: $apiUrl"
+
+          $response = & curl.exe --location --request POST $apiUrl `
+            --header "Content-Type: application/json"
+
+          Write-Host "Scan Response: $response"
+
+          if ($response -match '"message"\s*:\s*"token expired"') {
+            throw "Token expired. Pipeline blocked immediately."
+          }
+
+          # Helper to extract counts
+          function Extract-Count {
+            param ($key)
+            if ($response -match "`"$key`"\s*:\s*(\d+)") {
+              return [int]$Matches[1]
+            } else {
+              return 0
+            }
+          }
+
+          $critical = Extract-Count 'criticalCount'
+          $high     = Extract-Count 'highCount'
+          $medium   = Extract-Count 'mediumCount'
+          $low      = Extract-Count 'lowCount'
+          $info     = Extract-Count 'informationalCount'
+
+          Write-Host "Severity Summary:"
+          Write-Host "Critical: $critical"
+          Write-Host "High: $high"
+          Write-Host "Medium: $medium"
+          Write-Host "Low: $low"
+          Write-Host "Info: $info"
+
+          if ($env:BLOCK_PIPELINE -eq 'true') {
+            if ($env:BLOCK_CRITICAL -eq 'true' -and $critical -gt 0) {
+              throw "Blocked due to criticalCount > 0"
+            }
+            if ($env:BLOCK_HIGH -eq 'true' -and $high -gt 5) {
+              throw "Blocked due to highCount > 5"
+            }
+            if ($env:BLOCK_MEDIUM -eq 'true' -and $medium -gt 0) {
+              throw "Blocked due to mediumCount > 0"
+            }
+            if ($env:BLOCK_LOW -eq 'true' -and $low -gt 0) {
+              throw "Blocked due to lowCount > 0"
+            }
+            if ($env:BLOCK_INFO -eq 'true' -and $info -gt 0) {
+              throw "Blocked due to informationalCount > 0"
+            }
+            Write-Host "No blocking severity found. Pipeline continued."
+          } else {
+            Write-Host "BLOCK_PIPELINE is false — continuing regardless of findings."
+          }
+
+      - name: Post-processing
+        run: echo "Post-processing steps completed."
