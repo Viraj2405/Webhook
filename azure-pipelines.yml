@@ -1,27 +1,26 @@
-trigger:
+
+    trigger:
   branches:
     include:
       - main
-
+ 
 variables:
   SECURITY_SCAN_API_BASE: 'https://12a7-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
   APPKEYTOKEN: 'c90a80bb-514e-4f9c-9b5a-155c8e3f32ae'
   PROJECT_ID: 'a3089edd-2207-4875-9f3b-6415afa56bb2'
-
+ 
   BLOCK_PIPELINE: 'true'
   BLOCK_CRITICAL: 'true'
   BLOCK_HIGH: 'true'
   BLOCK_MEDIUM: 'true'
-  BLOCK_LOW: 'false'
-  BLOCK_INFO: 'false'
-
-  CRITICAL_THRESHOLD: '6'
-  HIGH_THRESHOLD: '5'
-  MEDIUM_THRESHOLD: '4'
-
+  CRITICAL_THRESHOLD:'6'
+  HIGH_THRESHOLD:'5'
+  MEDIUM_THRESHOLD:'4'
+ 
+ 
 pool:
   vmImage: 'windows-latest'
-
+ 
 steps:
   - task: PowerShell@2
     displayName: 'Run Security Scan via Curl'
@@ -29,65 +28,62 @@ steps:
       targetType: 'inline'
       script: |
         Write-Host "Starting Security Scan using curl..."
-
+ 
         $apiUrl = "$(SECURITY_SCAN_API_BASE)/$(PROJECT_ID)"
         Write-Host "Final API URL: $apiUrl"
-
-        $response = & curl.exe --location --request POST "$apiUrl" `
-          --header "Content-Type: application/json" `
-          --header "Api-Key: $(APPKEYTOKEN)"
-
+ 
+        $response = & curl.exe --location --request POST "$apiUrl"
+          --header "Content-Type: application/json"
+ 
         Write-Host "Scan Response: $response"
-
+ 
         if ($response -match '"message"\s*:\s*"token expired"') {
           throw "Token expired. Blocking pipeline."
         }
-
+ 
         function Extract-Count {
           param ($name)
-          if ($response -match '"' + $name + '"\s*:\s*(\d+)') {
+          if ($response -match "'"$name'"\s*:\s*(\d+)") {
             return [int]$Matches[1]
           }
           return 0
         }
-
+ 
         $critical = Extract-Count 'criticalCount'
         $high     = Extract-Count 'highCount'
         $medium   = Extract-Count 'mediumCount'
         $low      = Extract-Count 'lowCount'
         $info     = Extract-Count 'informationalCount'
-
+ 
         Write-Host "Severity Summary:"
         Write-Host "Critical: $critical"
         Write-Host "High: $high"
         Write-Host "Medium: $medium"
         Write-Host "Low: $low"
         Write-Host "Info: $info"
-
-        $criticalThreshold = [int]"$(CRITICAL_THRESHOLD)"
-        $highThreshold     = [int]"$(HIGH_THRESHOLD)"
-        $mediumThreshold   = [int]"$(MEDIUM_THRESHOLD)"
-
+ 
         if ("$(BLOCK_PIPELINE)" -eq 'true') {
-          if ("$(BLOCK_CRITICAL)" -eq 'true' -and $critical -ge $criticalThreshold) {
-            throw "Blocked: Critical count ($critical) >= Threshold ($criticalThreshold)"
+          if ("$(BLOCK_CRITICAL)" -eq 'true' -and $critical -gt 0) {
+            throw "Blocked due to criticalCount > 0"
           }
-          if ("$(BLOCK_HIGH)" -eq 'true' -and $high -ge $highThreshold) {
-            throw "Blocked: High count ($high) >= Threshold ($highThreshold)"
+          if ("$(BLOCK_HIGH)" -eq 'true' -and $high -gt 0) {
+            throw "Blocked due to highCount > 0"
           }
-          if ("$(BLOCK_MEDIUM)" -eq 'true' -and $medium -ge $mediumThreshold) {
-            throw "Blocked: Medium count ($medium) >= Threshold ($mediumThreshold)"
+          if ("$(BLOCK_MEDIUM)" -eq 'true' -and $medium -gt 0) {
+            throw "Blocked due to mediumCount > 0"
           }
           if ("$(BLOCK_LOW)" -eq 'true' -and $low -gt 0) {
-            throw "Blocked: Low count > 0"
+            throw "Blocked due to lowCount > 0"
           }
           if ("$(BLOCK_INFO)" -eq 'true' -and $info -gt 0) {
-            throw "Blocked: Info count > 0"
+            throw "Blocked due to informationalCount > 0"
           }
-          Write-Host "No blocking severity exceeded thresholds. Continuing pipeline."
+          Write-Host "No blocking severity found. Continuing pipeline."
         } else {
           Write-Host "BLOCK_PIPELINE is false — skipping severity checks."
         }
-
+ 
   - script: echo "Post-processing complete."
     displayName: 'Post-processing'
+ 
+ 
