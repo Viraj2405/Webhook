@@ -43,17 +43,15 @@ jobs:
         run: |
           $uploadUrl = "$env:UPLOAD_API_URL"
           $projectId = "$env:PROJECT_ID"
-          $repoPath = "repo"
+          $repoFile = "repo\README.md"  # Change this to any single file you want to upload
 
-          if (Test-Path -Path $repoPath) {
-            Write-Host "Uploading files from $repoPath..."
-            $form = @{
-              "file" = Get-Item -Path $repoPath
-              "project_id" = $projectId
-            }
-            Invoke-RestMethod -Uri $uploadUrl -Method Post -Form $form
+          if (Test-Path -Path $repoFile) {
+            Write-Host "Uploading file $repoFile to $uploadUrl"
+            & curl.exe --location --request POST $uploadUrl `
+              --form "file=@$repoFile" `
+              --form "project_id=$projectId"
           } else {
-            Write-Host "Repository path '$repoPath' does not exist."
+            Write-Host "File '$repoFile' not found. Skipping upload."
           }
 
       - name: Run Security Scan API
