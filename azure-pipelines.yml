@@ -33,7 +33,6 @@ steps:
 
         $response = & curl.exe --location --request POST "$apiUrl"
           --header "Content-Type: application/json"
-          --header "Api-Key: $(APPKEYTOKEN)"
 
         Write-Host "Scan Response: $response"
 
