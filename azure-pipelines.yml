@@ -68,14 +68,14 @@ steps:
         Write-Host "Medium: $medium"
 
         if ("$(BLOCK_PIPELINE)" -eq 'true') {
-          if ("$(BLOCK_CRITICAL)" -eq 'true' -and $critical -gt 0) {
-            throw "Blocked due to criticalCount > 0"
+          if ("$(BLOCK_CRITICAL)" -eq 'true' -and $critical -ge $criticalThreshold) {
+            throw "Blocked: Critical count ($critical) >= Threshold ($criticalThreshold)"
           }
-          if ("$(BLOCK_HIGH)" -eq 'true' -and $high -gt 0) {
-            throw "Blocked due to highCount > 0"
+          if ("$(BLOCK_HIGH)" -eq 'true' -and $high -ge $highThreshold) {
+            throw "Blocked: High count ($high) >= Threshold ($highThreshold)"
           }
-          if ("$(BLOCK_MEDIUM)" -eq 'true' -and $medium -gt 0) {
-            throw "Blocked due to mediumCount > 0"
+          if ("$(BLOCK_MEDIUM)" -eq 'true' -and $medium -ge $mediumThreshold) {
+            throw "Blocked: Medium count ($medium) >= Threshold ($mediumThreshold)"
           }
           Write-Host "No blocking severity found. Continuing pipeline."
         } else {
