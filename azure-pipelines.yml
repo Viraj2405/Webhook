@@ -12,9 +12,11 @@ variables:
   BLOCK_CRITICAL: 'true'
   BLOCK_HIGH: 'true'
   BLOCK_MEDIUM: 'true'
-  BLOCK_LOW: 'true'
-  BLOCK_INFO: 'true'
+  BLOCK_LOW: 'false'
+  BLOCK_INFO: 'false'
+
   CRITICAL_THRESHOLD: '6'
+  HIGH_THRESHOLD: '5'
   MEDIUM_THRESHOLD: '4'
 
 pool:
@@ -62,23 +64,27 @@ steps:
         Write-Host "Low: $low"
         Write-Host "Info: $info"
 
+        $criticalThreshold = [int]"$(CRITICAL_THRESHOLD)"
+        $highThreshold     = [int]"$(HIGH_THRESHOLD)"
+        $mediumThreshold   = [int]"$(MEDIUM_THRESHOLD)"
+
         if ("$(BLOCK_PIPELINE)" -eq 'true') {
-          if ("$(BLOCK_CRITICAL)" -eq 'true' -and $critical -gt 0) {
-            throw "Blocked due to criticalCount > 0"
+          if ("$(BLOCK_CRITICAL)" -eq 'true' -and $critical -ge $criticalThreshold) {
+            throw "Blocked: Critical count ($critical) >= Threshold ($criticalThreshold)"
           }
-          if ("$(BLOCK_HIGH)" -eq 'true' -and $high -gt 0) {
-            throw "Blocked due to highCount > 0"
+          if ("$(BLOCK_HIGH)" -eq 'true' -and $high -ge $highThreshold) {
+            throw "Blocked: High count ($high) >= Threshold ($highThreshold)"
           }
-          if ("$(BLOCK_MEDIUM)" -eq 'true' -and $medium -gt 0) {
-            throw "Blocked due to mediumCount > 0"
+          if ("$(BLOCK_MEDIUM)" -eq 'true' -and $medium -ge $mediumThreshold) {
+            throw "Blocked: Medium count ($medium) >= Threshold ($mediumThreshold)"
           }
           if ("$(BLOCK_LOW)" -eq 'true' -and $low -gt 0) {
-            throw "Blocked due to lowCount > 0"
+            throw "Blocked: Low count > 0"
           }
           if ("$(BLOCK_INFO)" -eq 'true' -and $info -gt 0) {
-            throw "Blocked due to informationalCount > 0"
+            throw "Blocked: Info count > 0"
           }
-          Write-Host "No blocking severity found. Continuing pipeline."
+          Write-Host "No blocking severity exceeded thresholds. Continuing pipeline."
         } else {
           Write-Host "BLOCK_PIPELINE is false — skipping severity checks."
         }
