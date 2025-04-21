@@ -31,8 +31,18 @@ steps:
         $apiUrl = "$(SECURITY_SCAN_API_BASE)/$(PROJECT_ID)"
         Write-Host "Final API URL: $apiUrl"
 
-        $response = & curl.exe --location --request POST "$apiUrl"
-          --header "Content-Type: application/json"
+        $headers = @(
+          "--header", "Content-Type: application/json",
+          "--header", "Api-Key: $(APPKEYTOKEN)"
+        )
+
+        $args = @(
+          "--location",
+          "--request", "POST",
+          $apiUrl
+        ) + $headers
+
+        $response = & curl.exe @args
 
         Write-Host "Scan Response: $response"
 
