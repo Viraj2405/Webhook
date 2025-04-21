@@ -80,6 +80,7 @@ steps:
           Write-Host "No blocking severity found. Continuing pipeline."
         } else {
           Write-Host "BLOCK_PIPELINE is false — skipping severity checks."
+        }
 
   - script: echo "Post-processing complete."
     displayName: 'Post-processing'
