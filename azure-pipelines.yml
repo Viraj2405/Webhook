@@ -1,73 +1,71 @@
 trigger:
-	  branches:
-		include:
-		  - main
-	
-	variables:
-	  SECURITY_SCAN_API_BASE: 'https://12a7-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
-	  PROJECT_ID: 'a3089edd-2207-4875-9f3b-6415afa56bb2'
-	  APPKEYTOKEN: 'c90a80bb-514e-4f9c-9b5a-155c8e3f32ae'
-	
-	  BLOCK_PIPELINE: 'true'
-	  BLOCK_CRITICAL: 'true'
-	  BLOCK_HIGH: 'true'
-	  BLOCK_MEDIUM: 'true'
-	  CRITICAL_THRESHOLD: '6'
-	  HIGH_THRESHOLD: '5'
-	  MEDIUM_THRESHOLD: '4'
-	
-	pool:
-	  vmImage: 'windows-latest'
-	
-	steps:
-	  - task: PowerShell@2
-		displayName: 'Run Security Scan1 via Curl'
-		inputs:
-		  targetType: 'inline'
-		  script: |
-			Write-Host "Starting Security Scan using curl..."
-	
-			$apiUrl = "$(SECURITY_SCAN_API_BASE)/$(PROJECT_ID)"
-			Write-Host "Final API URL: $apiUrl"
-	
-			$headers = @{
-			  "Content-Type" = "application/json"
-			  "Api-Key" = "$(APPKEYTOKEN)"
-			}
-	
-			$response = Invoke-RestMethod -Uri $apiUrl -Method POST -Headers $headers
-	
-			Write-Host "Scan Response:"
-			Write-Host ($response | ConvertTo-Json -Depth 5)
-	
-			if ($response.message -eq "token expired") {
-			  throw "Token expired. Blocking pipeline."
-			}
-	
-			$critical = $response.criticalCount
-			$high     = $response.highCount
-			$medium   = $response.mediumCount
-	
-			Write-Host "Severity Summary:"
-			Write-Host "Critical: $critical"
-			Write-Host "High: $high"
-			Write-Host "Medium: $medium"
-	
-			if ("$(BLOCK_PIPELINE)" -eq 'true') {
-			  if ("$(BLOCK_CRITICAL)" -eq 'true' -and $critical -ge [int]"$(CRITICAL_THRESHOLD)") {
-				throw "Blocked due to Critical vulnerabilities exceeding threshold"
-			  }
-			  if ("$(BLOCK_HIGH)" -eq 'true' -and $high -ge [int]"$(HIGH_THRESHOLD)") {
-				throw "Blocked due to High vulnerabilities exceeding threshold"
-			  }
-			  if ("$(BLOCK_MEDIUM)" -eq 'true' -and $medium -ge [int]"$(MEDIUM_THRESHOLD)") {
-				throw "Blocked due to Medium vulnerabilities exceeding threshold"
-			  }
-			  Write-Host "No blocking severity thresholds exceeded. Pipeline continued."
-			} else {
-			  Write-Host "Blocking disabled. Continuing pipeline regardless of severity."
-			}
-	
-	  - script: echo "Post-processing steps completed."
-		displayName: 'Post-processing'
-	
+  branches:
+    include:
+      - main
+
+variables:
+  SECURITY_SCAN_API_BASE: 'https://12a7-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
+  PROJECT_ID: 'a3089edd-2207-4875-9f3b-6415afa56bb2'
+  APPKEYTOKEN: 'c90a80bb-514e-4f9c-9b5a-155c8e3f32ae'
+
+  BLOCK_PIPELINE: 'true'
+  BLOCK_CRITICAL: 'true'
+  BLOCK_HIGH: 'true'
+  BLOCK_MEDIUM: 'true'
+  CRITICAL_THRESHOLD: '6'
+  HIGH_THRESHOLD: '5'
+  MEDIUM_THRESHOLD: '4'
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+  - task: PowerShell@2
+    displayName: 'Run Security Scan1 via Curl'
+    inputs:
+      targetType: 'inline'
+      script: |
+        Write-Host "Starting Security Scan using curl..."
+
+        $apiUrl = "$(SECURITY_SCAN_API_BASE)/$(PROJECT_ID)"
+        Write-Host "Final API URL: $apiUrl"
+
+        $headers = @{
+          "Content-Type" = "application/json"
+          "Api-Key" = "$(APPKEYTOKEN)"
+        }
+
+        $response = Invoke-RestMethod -Uri $apiUrl -Method POST -Headers $headers
+
+        Write-Host "Scan Response:"
+        Write-Host ($response | ConvertTo-Json -Depth 5)
+
+        if ($response.message -eq "token expired") {
+          throw "Token expired. Blocking pipeline."
+        }
+
+        $critical = $response.criticalCount
+        $high     = $response.highCount
+        $medium   = $response.mediumCount
+
+        Write-Host "Severity Summary:"
+        Write-Host "Critical: $critical"
+        Write-Host "High: $high"
+        Write-Host "Medium: $medium"
+
+        if ("$(BLOCK_PIPELINE)" -eq 'true') {
+          if ("$(BLOCK_CRITICAL)" -eq 'true' -and $critical -ge [int]"$(CRITICAL_THRESHOLD)") {
+            throw "Blocked due to Critical vulnerabilities exceeding threshold"
+          }
+          if ("$(BLOCK_HIGH)" -eq 'true' -and $high -ge [int]"$(HIGH_THRESHOLD)") {
+            throw "Blocked due to High vulnerabilities exceeding threshold"
+          }
+          if ("$(BLOCK_MEDIUM)" -eq 'true' -and $medium -ge [int]"$(MEDIUM_THRESHOLD)") {
+            throw "Blocked due to Medium vulnerabilities exceeding threshold"
+          }
+          Write-Host "No blocking severity thresholds exceeded. Pipeline continued."
+        } else {
+          Write-Host "Blocking disabled. Continuing pipeline regardless of severity."
+
+  - script: echo "Post-processing steps completed."
+    displayName: 'Post-processing'
