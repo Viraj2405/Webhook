@@ -1,4 +1,4 @@
-name: Run Security 
+name: Run Security
 
 on:
   push:
@@ -9,6 +9,9 @@ env:
   SECURITY_SCAN_API_BASE: https://cf9b-45-252-74-134.ngrok-free.app/v1/startSecurityScan
   APPKEYTOKEN: aa15ca51a98ea1761a18d73b581eeb78
   PROJECT_ID: 88b4f7e6-0ce0-4930-bc97-d17d4c8b548c
+  GIT_REPO: https://github.com/your-username/your-repo.git
+  GIT_BRANCH: main
+  UPLOAD_API_URL: https://your-upload-api-endpoint.com/upload
 
   # Blocking toggles
   BLOCK_PIPELINE: 'true'
@@ -23,6 +26,37 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      - name: Clone Repository
+        shell: pwsh
+        run: |
+          if (Test-Path -Path "repo") {
+            Write-Host "Repository already exists, pulling latest changes..."
+            Set-Location -Path "repo"
+            git pull origin $env:GIT_BRANCH
+            Set-Location -Path ".."
+          } else {
+            Write-Host "Cloning repository..."
+            git clone -b $env:GIT_BRANCH $env:GIT_REPO repo
+          }
+
+      - name: Upload Changed Files
+        shell: pwsh
+        run: |
+          $uploadUrl = "$env:UPLOAD_API_URL"
+          $projectId = "$env:PROJECT_ID"
+          $repoPath = "repo"
+
+          if (Test-Path -Path $repoPath) {
+            Write-Host "Uploading files from $repoPath..."
+            $form = @{
+              "file" = Get-Item -Path $repoPath
+              "project_id" = $projectId
+            }
+            Invoke-RestMethod -Uri $uploadUrl -Method Post -Form $form
+          } else {
+            Write-Host "Repository path '$repoPath' does not exist."
+          }
+
       - name: Run Security Scan API
         shell: pwsh
         run: |
