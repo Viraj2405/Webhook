@@ -21,7 +21,7 @@ trigger:
 	
 	steps:
 	  - task: PowerShell@2
-		displayName: 'Run Security Scan via Curl'
+		displayName: 'Run Security Scan1 via Curl'
 		inputs:
 		  targetType: 'inline'
 		  script: |
