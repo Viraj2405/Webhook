@@ -1,4 +1,5 @@
-trigger:
+
+    trigger:
   branches:
     include:
       - main
@@ -83,3 +84,5 @@ steps:
  
   - script: echo "Post-processing complete."
     displayName: 'Post-processing'
+ 
+ 
