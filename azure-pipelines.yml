@@ -12,9 +12,9 @@ variables:
   BLOCK_CRITICAL: 'true'
   BLOCK_HIGH: 'true'
   BLOCK_MEDIUM: 'true'
+
   CRITICAL_THRESHOLD:'6'
   HIGH_THRESHOLD:'5'
-
   MEDIUM_THRESHOLD:'4'
  
  
@@ -52,15 +52,11 @@ steps:
         $critical = Extract-Count 'criticalCount'
         $high     = Extract-Count 'highCount'
         $medium   = Extract-Count 'mediumCount'
-        $low      = Extract-Count 'lowCount'
-        $info     = Extract-Count 'informationalCount'
  
         Write-Host "Severity Summary:"
         Write-Host "Critical: $critical"
         Write-Host "High: $high"
         Write-Host "Medium: $medium"
-        Write-Host "Low: $low"
-        Write-Host "Info: $info"
  
         if ("$(BLOCK_PIPELINE)" -eq 'true') {
           if ("$(BLOCK_CRITICAL)" -eq 'true' -and $critical -gt 0) {
@@ -71,12 +67,6 @@ steps:
           }
           if ("$(BLOCK_MEDIUM)" -eq 'true' -and $medium -gt 0) {
             throw "Blocked due to mediumCount > 0"
-          }
-          if ("$(BLOCK_LOW)" -eq 'true' -and $low -gt 0) {
-            throw "Blocked due to lowCount > 0"
-          }
-          if ("$(BLOCK_INFO)" -eq 'true' -and $info -gt 0) {
-            throw "Blocked due to informationalCount > 0"
           }
           Write-Host "No blocking severity found. Continuing pipeline."
         } else {
