@@ -67,9 +67,9 @@ steps:
         Write-Host "High: $high"
         Write-Host "Medium: $medium"
 
-		$criticalThreshold = [int]"$(CRITICAL_THRESHOLD)"
-		$highThreshold     = [int]"$(HIGH_THRESHOLD)"
-		$mediumThreshold   = [int]"$(MEDIUM_THRESHOLD)"
+	$criticalThreshold = [int]"$(CRITICAL_THRESHOLD)"
+	$highThreshold     = [int]"$(HIGH_THRESHOLD)"
+	$mediumThreshold   = [int]"$(MEDIUM_THRESHOLD)"
 
         if ("$(BLOCK_PIPELINE)" -eq 'true') {
           if ("$(BLOCK_CRITICAL)" -eq 'true' -and $critical -ge $criticalThreshold) {
