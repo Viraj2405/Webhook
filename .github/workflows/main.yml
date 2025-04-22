@@ -10,6 +10,7 @@ env:
   APPKEYTOKEN: aa15ca51a98ea1761a18d73b581eeb78
   PROJECT_ID: 88b4f7e6-0ce0-4930-bc97-d17d4c8b548c
   # Blocking toggles
+  
   BLOCK_PIPELINE: 'true'
   BLOCK_CRITICAL: 'true'
   BLOCK_HIGH: 'true'
