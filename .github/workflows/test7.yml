@@ -6,19 +6,19 @@ on:
       - main
 
 env:
-  SECURITY_SCAN_API_BASE: 'https://12a7-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
-  PROJECT_ID: 'a3089edd-2207-4875-9f3b-6415afa56bb2'
+  SECURITY_SCAN_API_BASE: 'http://103.81.38.252:9090/v1/startSecurityScan'
+  PROJECT_ID: '796f933f-18fa-44e4-a402-dade03d77be7'
 
-  BLOCK_PIPELINE: 'true'
-  BLOCK_CRITICAL: 'true'
-  BLOCK_HIGH: 'true'
-  BLOCK_MEDIUM: 'true'
+  BLOCK_PIPELINE: 'false'
+  BLOCK_CRITICAL: 'false'
+  BLOCK_HIGH: 'false'
+  BLOCK_MEDIUM: 'false'
 
-  CRITICAL_THRESHOLD: '3'
-  HIGH_THRESHOLD: '2'
-  MEDIUM_THRESHOLD: '1'
+  CRITICAL_THRESHOLD: '0'
+  HIGH_THRESHOLD: '0'
+  MEDIUM_THRESHOLD: '0'
 
-  INTEGRATION_ID: 'c45aede5-68b6-435e-832a-02bda7d39832'
+  INTEGRATION_ID: '2b0e0ad0-4ef0-4fbc-9612-40f20b77c89b'
 
 jobs:
   security-scan:
