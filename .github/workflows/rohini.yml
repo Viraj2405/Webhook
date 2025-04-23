@@ -1,0 +1,80 @@
+pipeline {
+		agent any
+		environment {
+			SECURITY_SCAN_API = 'http://103.81.38.252:9090/integration/v1/startSecurityScan'
+			PROJECT_ID = '796f933f-18fa-44e4-a402-dade03d77be7'
+			BLOCK_PIPELINE = 'false'
+			BLOCK_CRITICAL = 'false'
+			BLOCK_HIGH = 'false'
+			BLOCK_MEDIUM = 'false'
+			CRITICAL_THRESHOLD = '0'
+			HIGH_THRESHOLD = '0'
+			MEDIUM_THRESHOLD = '0'
+			INTEGRATION_ID='e02c9dfb-2a36-4ae6-a6c5-7947ce3195c2'
+		}
+	
+		stages {
+	
+			stage('Run Security Scan') {
+				steps {
+					script {
+						def scanResponse = bat(
+							script: """
+								curl --location --request POST "http://103.81.38.252:9090/integration/v1/startSecurityScan/796f933f-18fa-44e4-a402-dade03d77be7" ^
+								--header "Content-Type: application/json" ^
+								--header "Api-Key: ${env.INTEGRATION_ID}"
+							""",
+							returnStdout: true
+						).trim()
+	
+						echo "Scan Response: ${scanResponse}"
+	
+						if (scanResponse.contains('"message":"token expired"')) {
+							error "Token expired. Exiting early."
+						}
+	
+						def extractInt = { key ->
+							def match = (scanResponse =~ /"${key}"\s*:\s*(\d+)/)
+							return match ? match[0][1].toInteger() : 0
+						}
+	
+						def critical = extractInt('criticalCount')
+						def high = extractInt('highCount')
+						def medium = extractInt('mediumCount')
+	
+						echo "Scan Summary:"
+						echo "Critical: ${critical}"
+						echo "High: ${high}"
+						echo "Medium: ${medium}"
+	
+						if (env.BLOCK_PIPELINE == 'true') {
+							if (env.BLOCK_CRITICAL == 'true' && critical >= env.CRITICAL_THRESHOLD.toInteger()) {
+								error "Blocked due to Critical vulnerabilities exceeding threshold"
+							}
+							if (env.BLOCK_HIGH == 'true' && high >= env.HIGH_THRESHOLD.toInteger()) {
+								error "Blocked due to High vulnerabilities exceeding threshold"
+							}
+							if (env.BLOCK_MEDIUM == 'true' && medium >= env.MEDIUM_THRESHOLD.toInteger()) {
+								error "Blocked due to Medium vulnerabilities exceeding threshold"
+							}
+							echo "No blocking severity thresholds exceeded. Pipeline continued."
+						} else {
+							echo "Blocking disabled. Continuing pipeline regardless of severity."
+						}
+					}
+				}
+			}
+	
+			stage('Post-processing') {
+				steps {
+					echo "Post-processing steps completed."
+				}
+			}
+		}
+	
+		post {
+			always {
+				cleanWs()
+			}
+		}
+	}
