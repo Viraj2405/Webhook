@@ -33,10 +33,9 @@ jobs:
           $apiUrl = "$env:SECURITY_SCAN_API_BASE/$env:PROJECT_ID"
           Write-Host "Final API URL: $apiUrl"
 
-          $curlResponse = curl.exe -s -X POST 
+          $curlResponse = curl.exe -s -X POST
             --header "Content-Type: application/json" 
             --header "Api-Key: $env:INTEGRATION_ID" 
-            "$apiUrl"
 
           if (!$curlResponse) {
             throw "No response received from API."
