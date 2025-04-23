@@ -6,19 +6,19 @@ on:
       - main
 
 env:
-  SECURITY_SCAN_API_BASE: 'http://103.81.38.252:9090/v1/startSecurityScan'
-  PROJECT_ID: '455076df-5360-4aa0-97a8-674262f05f5f'
+  SECURITY_SCAN_API_BASE: 'https://12a7-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
+  PROJECT_ID: 'a3089edd-2207-4875-9f3b-6415afa56bb2'
 
-  BLOCK_PIPELINE: 'false'
-  BLOCK_CRITICAL: 'false'
-  BLOCK_HIGH: 'false'
-  BLOCK_MEDIUM: 'false'
+  BLOCK_PIPELINE: 'true'
+  BLOCK_CRITICAL: 'true'
+  BLOCK_HIGH: 'true'
+  BLOCK_MEDIUM: 'true'
 
-  CRITICAL_THRESHOLD: '0'
-  HIGH_THRESHOLD: '0'
-  MEDIUM_THRESHOLD: '0'
+  CRITICAL_THRESHOLD: '3'
+  HIGH_THRESHOLD: '2'
+  MEDIUM_THRESHOLD: '1'
 
-  INTEGRATION_ID: '770d14fb-53f0-4a4d-afcf-d671a13f5038'
+  INTEGRATION_ID: 'c45aede5-68b6-435e-832a-02bda7d39832'
 
 jobs:
   security-scan:
@@ -33,28 +33,25 @@ jobs:
           $apiUrl = "$env:SECURITY_SCAN_API_BASE/$env:PROJECT_ID"
           Write-Host "Final API URL: $apiUrl"
 
-          $headers = @{ "Content-Type" = "application/json"; "Api-Key" = "$env:INTEGRATION_ID" }
-          $response = Invoke-RestMethod -Method POST -Uri $apiUrl -Headers $headers -UseBasicParsing -ErrorAction Stop
+          $curlResponse = curl.exe -s -X POST
+            --header "Content-Type: application/json" 
+            --header "Api-Key: $env:INTEGRATION_ID" 
 
-          $responseJson = $response | ConvertTo-Json -Depth 10
-          Write-Host "Scan Response: $responseJson"
+          if (!$curlResponse) {
+            throw "No response received from API."
+          }
 
-          if ($responseJson -match '"message"\s*:\s*"token expired"') {
+          $responseJson = $curlResponse | ConvertFrom-Json
+          $rawJson = $curlResponse | ConvertTo-Json -Depth 10
+          Write-Host "Scan Response: $rawJson"
+
+          if ($rawJson -match '"message"\s*:\s*"token expired"') {
             throw "Token expired. Pipeline blocked immediately."
           }
 
-          function Extract-Count {
-            param ([string]$key)
-            if ($responseJson -match ('"' + $key + '"\s*:\s*(\d+)')) {
-              return [int]$Matches[1]
-            } else {
-              return 0
-            }
-          }
-
-          $critical = $response.criticalCount
-          $high     = $response.highCount
-          $medium   = $response.mediumCount
+          $critical = $responseJson.criticalCount
+          $high     = $responseJson.highCount
+          $medium   = $responseJson.mediumCount
 
           Write-Host "Severity Summary:"
           Write-Host "Critical: $critical"
