@@ -33,16 +33,17 @@ jobs:
           $apiUrl = "$env:SECURITY_SCAN_API_BASE/$env:PROJECT_ID"
           Write-Host "Final API URL: $apiUrl"
 
-          $curlCommand = "curl.exe -s -X POST --header "Content-Type: application/json" --header "Api-Key: $env:INTEGRATION_ID" "$apiUrl""
-          Write-Host "Executing: $curlCommand"
-          $response = Invoke-Expression $curlCommand
+          $curlResponse = curl.exe -s -X POST 
+            --header "Content-Type: application/json" 
+            --header "Api-Key: $env:INTEGRATION_ID" 
+            "$apiUrl"
 
-          if (!$response) {
+          if (!$curlResponse) {
             throw "No response received from API."
           }
 
-          $responseJson = $response | ConvertFrom-Json
-          $rawJson = $response | ConvertTo-Json -Depth 10
+          $responseJson = $curlResponse | ConvertFrom-Json
+          $rawJson = $curlResponse | ConvertTo-Json -Depth 10
           Write-Host "Scan Response: $rawJson"
 
           if ($rawJson -match '"message"\s*:\s*"token expired"') {
