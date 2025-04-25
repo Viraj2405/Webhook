@@ -1,83 +1,71 @@
-name: Run Security
+pipeline:
+  agent:
+    any: true
 
-on:
-  push:
-    branches:
-      - main
+  environment:
+    SECURITY_SCAN_API: 'http://103.81.38.252:9090/v1/startSecurityScan'
+    PROJECT_ID: '561cea66-6e4d-48f9-8163-0aa3546c9fb9'
+    BLOCK_PIPELINE: 'true'
+    BLOCK_CRITICAL: 'true'
+    BLOCK_HIGH: 'true'
+    BLOCK_MEDIUM: 'true'
+    CRITICAL_THRESHOLD: '1'
+    HIGH_THRESHOLD: '1'
+    MEDIUM_THRESHOLD: '1'
+    INTEGRATION_ID: '8ea003fd-0d28-410b-8aa6-716a713ad896'
 
-env:
-  SECURITY_SCAN_API_BASE: 'https://99c3-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
-  PROJECT_ID: 'a3089edd-2207-4875-9f3b-6415afa56bb2'
+  stages:
+    - stage: Run Security Scan
+      steps:
+        - script: |
+            def scanResponse = sh(
+              script: '''
+                curl --location --request POST "http://103.81.38.252:9090/v1/startSecurityScan/${PROJECT_ID}" \
+                --header "Content-Type: application/json" \
+                --header "Api-Key: ${INTEGRATION_ID}"
+              ''',
+              returnStdout: true
+            ).trim()
 
-  BLOCK_PIPELINE: 'true'
-  BLOCK_CRITICAL: 'false'
-  BLOCK_HIGH: 'false'
-  BLOCK_MEDIUM: 'false'
+            echo "Scan Response: ${scanResponse}"
 
-  CRITICAL_THRESHOLD: '0'
-  HIGH_THRESHOLD: '0'
-  MEDIUM_THRESHOLD: '0'
-
-  INTEGRATION_ID: 'f1c51071-0ede-4497-b8c1-8b8947779230'
-
-jobs:
-  security-scan:
-    runs-on: windows-latest
-
-    steps:
-      - name: Run Security Scan API
-        shell: pwsh
-        run: |
-          Write-Host "Calling Security Scan API..."
-
-          $apiUrl = "$env:SECURITY_SCAN_API_BASE/$env:PROJECT_ID"
-          Write-Host "Final API URL: $apiUrl"
-
-          $curlArgs = @(
-            "-s",
-            "-X", "POST",
-            "--header", "Content-Type: application/json",
-            "--header", "Api-Key: $env:INTEGRATION_ID",
-            $apiUrl
-          )
-
-          $curlResponse = & curl.exe @curlArgs
-
-          if (-not $curlResponse) {
-            throw "No response received from API."
-          }
-
-          $responseJson = $curlResponse | ConvertFrom-Json
-          $rawJson = $curlResponse | ConvertTo-Json -Depth 10
-          Write-Host "Scan Response: $rawJson"
-
-          if ($rawJson -match '"message"\s*:\s*"token expired"') {
-            throw "Token expired. Pipeline blocked immediately."
-          }
-
-          $critical = $responseJson.criticalCount
-          $high     = $responseJson.highCount
-          $medium   = $responseJson.mediumCount
-
-          Write-Host "Severity Summary:"
-          Write-Host "Critical: $critical"
-          Write-Host "High: $high"
-          Write-Host "Medium: $medium"
-
-          if ($env:BLOCK_PIPELINE -eq 'true') {
-            if ($env:BLOCK_CRITICAL -eq 'true' -and $critical -ge [int]$env:CRITICAL_THRESHOLD) {
-              throw "Blocked due to Critical vulnerabilities exceeding threshold"
+            if (scanResponse.contains('"message":"token expired"')) {
+              error "Token expired. Exiting early."
             }
-            if ($env:BLOCK_HIGH -eq 'true' -and $high -ge [int]$env:HIGH_THRESHOLD) {
-              throw "Blocked due to High vulnerabilities exceeding threshold"
-            }
-            if ($env:BLOCK_MEDIUM -eq 'true' -and $medium -ge [int]$env:MEDIUM_THRESHOLD) {
-              throw "Blocked due to Medium vulnerabilities exceeding threshold"
-            }
-            Write-Host "No blocking severity thresholds exceeded. Pipeline continued."
-          } else {
-            Write-Host "Blocking disabled. Continuing pipeline regardless of severity."
-          }
 
-      - name: Post-processing
-        run: echo "Post-processing steps completed."
+            def extractInt = { key ->
+              def match = (scanResponse =~ /"${key}"\s*:\s*(\d+)/)
+              return match ? match[0][1].toInteger() : 0
+            }
+
+            def critical = extractInt('criticalCount')
+            def high = extractInt('highCount')
+            def medium = extractInt('mediumCount')
+
+            echo "Scan Summary:"
+            echo "Critical: ${critical}"
+            echo "High: ${high}"
+            echo "Medium: ${medium}"
+
+            if (env.BLOCK_PIPELINE == 'true') {
+              if (env.BLOCK_CRITICAL == 'true' && critical >= env.CRITICAL_THRESHOLD.toInteger()) {
+                error "Blocked due to Critical vulnerabilities exceeding threshold"
+              }
+              if (env.BLOCK_HIGH == 'true' && high >= env.HIGH_THRESHOLD.toInteger()) {
+                error "Blocked due to High vulnerabilities exceeding threshold"
+              }
+              if (env.BLOCK_MEDIUM == 'true' && medium >= env.MEDIUM_THRESHOLD.toInteger()) {
+                error "Blocked due to Medium vulnerabilities exceeding threshold"
+              }
+              echo "No blocking severity thresholds exceeded. Pipeline continued."
+            } else {
+              echo "Blocking disabled. Continuing pipeline regardless of severity."
+            }
+
+    - stage: Post-processing
+      steps:
+        - echo: "Post-processing steps completed."
+
+  post:
+    always:
+      - cleanWs: {}
