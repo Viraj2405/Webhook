@@ -78,8 +78,10 @@ jobs:
 
           function Extract-Int {
             param([string]$key)
-            if ($response -match ""$key"\s*:\s*(\d+)") {
-              return [int]$matches[1]
+            $pattern = '"{0}"\s*:\s*(\d+)' -f $key
+            $match = [regex]::Match($response, $pattern)
+            if ($match.Success) {
+              return [int]$match.Groups[1].Value
             } else {
               return 0
             }
