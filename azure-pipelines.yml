@@ -4,33 +4,52 @@ trigger:
       - main
 
 variables:
-  SECURITY_SCAN_API_BASE: 'https://12a7-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
-  APPKEYTOKEN: 'c90a80bb-514e-4f9c-9b5a-155c8e3f32ae'
-  PROJECT_ID: 'a3089edd-2207-4875-9f3b-6415afa56bb2'
+  GIT_REPO: 'https://github.com/swirlai/swirl-search.git'
+  GIT_BRANCH: 'main'
+  FILE_NAME: 'Swirl.postman_collection.json'
 
-  BLOCK_PIPELINE: 'true'
-  BLOCK_CRITICAL: 'true'
-  BLOCK_HIGH: 'true'
-  BLOCK_MEDIUM: 'true'
+  SECURITY_SCAN_API: https://57bf-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
+  UPLOAD_API_URL: 'https://57bf-45-252-74-134.ngrok-free.app/v1/webHook'
+  APPKEYTOKEN: '58cf9a96-20b1-4da7-94cd-8cd4e3da8f84'
+  PROJECT_ID: '6f357ee3-d91e-4947-84ba-d0bc2c70fe73'
 
-  CRITICAL_THRESHOLD: '6'
-  HIGH_THRESHOLD: '5'
-  MEDIUM_THRESHOLD: '4'
+  BLOCK_PIPELINE : 'true'
+  BLOCK_CRITICAL : 'true'
+  BLOCK_HIGH     : 'true'
+  BLOCK_MEDIUM   : 'true'
+  CRITICAL_THRESHOLD : '1'
+  HIGH_THRESHOLD     : '1'
+  MEDIUM_THRESHOLD   : '1'
 
 pool:
   vmImage: 'windows-latest'
 
 steps:
   - task: PowerShell@2
-    displayName: 'Run Security Scan via Curl'
+    displayName: 'Clone and Upload File'
     inputs:
       targetType: 'inline'
       script: |
-        Write-Host "Starting Security Scan using curl..."
+        git clone --branch $(GIT_BRANCH) --depth 1 $(GIT_REPO) temp-repo
 
-        $apiUrl = "$(SECURITY_SCAN_API_BASE)/$(PROJECT_ID)"
-        Write-Host "Final API URL: $apiUrl"
+        $file = Get-ChildItem -Path temp-repo -Recurse -File -Filter "$(FILE_NAME)" | Select-Object -First 1
 
+        if ($file) {
+          Write-Host "Found file: $($file.FullName)"
+          Copy-Item -Path $file.FullName -Destination "$(FILE_NAME)"
+          curl.exe --location --form "file=@$(FILE_NAME)" --form "project_id=$(PROJECT_ID)" "$(UPLOAD_API_URL)"
+        } else {
+          throw "File '$(FILE_NAME)' not found in repository."
+        }
+
+  - task: PowerShell@2
+    displayName: 'Run Security Scan'
+    inputs:
+      targetType: 'inline'
+      script: |
+        Write-Host "Starting Security Scan..."
+
+        $apiUrl = "$(SECURITY_SCAN_API)/$(PROJECT_ID)"
         $headers = @(
           "--header", "Content-Type: application/json",
           "--header", "Api-Key: $(APPKEYTOKEN)"
@@ -84,7 +103,6 @@ steps:
           Write-Host "No blocking severity found. Continuing pipeline."
         } else {
           Write-Host "BLOCK_PIPELINE is false — skipping severity checks."
-        }
 
   - script: echo "Post-processing complete."
-    displayName: 'Post-processing'
+    displayName: 'Post-processing
