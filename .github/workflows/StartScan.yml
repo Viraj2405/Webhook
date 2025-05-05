@@ -9,7 +9,7 @@ env:
   GIT_REPO: 'https://github.com/Viraj2405/Webhook.git'
   GIT_BRANCH: 'main'
   FILE_NAME: 'Haircut Store API-06-09-2024 (1).json'
-  SECURITY_SCAN_API: 'https://57bf-45-252-74-134.ngrok-free.app/v1/startSecurityScan.'
+  SECURITY_SCAN_API: 'https://57bf-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
   PROJECT_ID: '712f9672-39e4-421a-b775-7627b4b82bc4'
   BLOCK_PIPELINE: 'True'
   BLOCK_CRITICAL: 'True'
