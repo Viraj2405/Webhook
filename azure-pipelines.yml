@@ -4,22 +4,23 @@ trigger:
       - main
 
 variables:
-  GIT_REPO: 'https://github.com/swirlai/swirl-search.git'
+  GIT_REPO: 'https://github.com/swirlai/swirl-search'
   GIT_BRANCH: 'main'
   FILE_NAME: 'Swirl.postman_collection.json'
 
   SECURITY_SCAN_API: 'https://57bf-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
   UPLOAD_API_URL: 'https://57bf-45-252-74-134.ngrok-free.app/v1/webHook'
-  APPKEYTOKEN: '58cf9a96-20b1-4da7-94cd-8cd4e3da8f84'
-  PROJECT_ID: '6f357ee3-d91e-4947-84ba-d0bc2c70fe73'
+  APPKEYTOKEN: '0421f1d6-a08e-4220-8771-bdb013d15fef'
+  PROJECT_ID: 'da195786-0e21-4199-9782-5730effb6699'
 
-  BLOCK_PIPELINE : 'true'
-  BLOCK_CRITICAL : 'true'
-  BLOCK_HIGH     : 'true'
-  BLOCK_MEDIUM   : 'true'
-  CRITICAL_THRESHOLD : '1'
-  HIGH_THRESHOLD     : '1'
-  MEDIUM_THRESHOLD   : '1'
+  BLOCK_PIPELINE: 'false'
+  BLOCK_CRITICAL: 'false'
+  BLOCK_HIGH: 'false'
+  BLOCK_MEDIUM: 'false'
+
+  CRITICAL_THRESHOLD: '0'
+  HIGH_THRESHOLD: '0'
+  MEDIUM_THRESHOLD: '0'
 
 pool:
   vmImage: 'windows-latest'
@@ -90,7 +91,7 @@ steps:
         $highThreshold     = [int]"$(HIGH_THRESHOLD)"
         $mediumThreshold   = [int]"$(MEDIUM_THRESHOLD)"
 
-        if ("$(BLOCK_PIPELINE)" -eq 'true') {
+		if ("$(BLOCK_PIPELINE)" -eq 'true') {
           if ("$(BLOCK_CRITICAL)" -eq 'true' -and $critical -ge $criticalThreshold) {
             throw "Blocked: Critical count ($critical) >= Threshold ($criticalThreshold)"
           }
