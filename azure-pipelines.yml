@@ -8,7 +8,7 @@ variables:
   GIT_BRANCH: 'main'
   FILE_NAME: 'Swirl.postman_collection.json'
 
-  SECURITY_SCAN_API: https://57bf-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
+  SECURITY_SCAN_API: 'https://57bf-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
   UPLOAD_API_URL: 'https://57bf-45-252-74-134.ngrok-free.app/v1/webHook'
   APPKEYTOKEN: '58cf9a96-20b1-4da7-94cd-8cd4e3da8f84'
   PROJECT_ID: '6f357ee3-d91e-4947-84ba-d0bc2c70fe73'
