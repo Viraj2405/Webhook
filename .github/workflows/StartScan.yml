@@ -29,7 +29,7 @@ jobs:
       - name: Clone Only Specific File
         shell: pwsh
         run: |
-          Write-Host "Cloning only ${env:FILE_NAME}"
+          Write-Host "Cloning only $env:FILE_NAME"
           git init repo
           cd repo
           git remote add origin $env:GIT_REPO
@@ -41,36 +41,30 @@ jobs:
         shell: pwsh
         run: |
           if (Test-Path "repo\$env:FILE_NAME") {
-          Write-Host "Uploading file: $env:FILE_NAME"
-
-          $curlArgs = @(
-            "--location",
-            "--form", "file=@repo\$env:FILE_NAME",
-            "--form", "project_id=$env:PROJECT_ID",
-            "$env:UPLOAD_API_URL"
-          )
-
-          & curl.exe @curlArgs
+            Write-Host "Uploading file: $env:FILE_NAME"
+            $args = @(
+              "--location",
+              "--form", "file=@repo\$env:FILE_NAME",
+              "--form", "project_id=$env:PROJECT_ID",
+              $env:UPLOAD_API_URL
+            )
+            & curl.exe @args
           } else {
-          throw "File '$env:FILE_NAME' not found in sparse clone"
+            throw "File '$env:FILE_NAME' not found in sparse clone"
           }
-
 
       - name: Call Security Scan API
         shell: pwsh
         run: |
           Write-Host "Calling Security Scan API..."
-
           $apiUrl = "$env:SECURITY_SCAN_API/$env:PROJECT_ID"
-            $curlArgs = @(
-              "--silent",
-              "--request", "POST",
-              "--header", "Api-Key: $env:INTEGRATION_ID",
-              $apiUrl
-            )
-            
-            $response = & curl.exe @curlArgs
-
+          $args = @(
+            "--silent",
+            "--request", "POST",
+            "--header", "Api-Key: $env:INTEGRATION_ID",
+            $apiUrl
+          )
+          $response = & curl.exe @args
 
           if (-not $response) {
             throw "No response received from API."
@@ -84,7 +78,7 @@ jobs:
 
           function Extract-Int {
             param([string]$key)
-            if ($response -match "__QUOTE__$key__QUOTE__\s*:\s*(\d+)") {
+            if ($response -match ""$key"\s*:\s*(\d+)") {
               return [int]$matches[1]
             } else {
               return 0
@@ -113,7 +107,6 @@ jobs:
             Write-Host "No blocking conditions met. Continuing pipeline."
           } else {
             Write-Host "Blocking disabled. Continuing regardless of findings."
-          }
 
       - name: Post-processing
         run: echo "Post-processing steps completed."
