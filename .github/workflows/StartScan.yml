@@ -41,14 +41,20 @@ jobs:
         shell: pwsh
         run: |
           if (Test-Path "repo\$env:FILE_NAME") {
-            Write-Host "Uploading file: $env:FILE_NAME"
-            curl.exe --location __BACKTICK__
-              --form "file=@repo\$env:FILE_NAME" __BACKTICK__
-              --form "project_id=$env:PROJECT_ID" __BACKTICK__
-              $env:UPLOAD_API_URL
+          Write-Host "Uploading file: $env:FILE_NAME"
+
+          $curlArgs = @(
+            "--location",
+            "--form", "file=@repo\$env:FILE_NAME",
+            "--form", "project_id=$env:PROJECT_ID",
+            "$env:UPLOAD_API_URL"
+          )
+
+          & curl.exe @curlArgs
           } else {
-            throw "File '$env:FILE_NAME' not found in sparse clone"
+          throw "File '$env:FILE_NAME' not found in sparse clone"
           }
+
 
       - name: Call Security Scan API
         shell: pwsh
