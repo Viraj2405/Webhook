@@ -1,4 +1,4 @@
-name: Run Security1
+name: Run Security Scan
 
 on:
   push:
@@ -6,77 +6,101 @@ on:
       - main
 
 env:
-  SECURITY_SCAN_API_BASE: 'https://8f14-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
-  PROJECT_ID: 'a3089edd-2207-4875-9f3b-6415afa56bb2'
-
-  BLOCK_PIPELINE: 'true'
-  BLOCK_CRITICAL: 'false'
-  BLOCK_HIGH: 'false'
-  BLOCK_MEDIUM: 'false'
-
-  CRITICAL_THRESHOLD: '0'
-  HIGH_THRESHOLD: '0'
-  MEDIUM_THRESHOLD: '0'
-
-  INTEGRATION_ID: 'f1c51071-0ede-4497-b8c1-8b8947779230'
+  GIT_REPO: 'https://github.com/Viraj2405/Webhook.git'
+  GIT_BRANCH: 'main'
+  FILE_NAME: 'Haircut Store API-06-09-2024 (1).json'
+  SECURITY_SCAN_API: 'https://57bf-45-252-74-134.ngrok-free.app/v1/startSecurityScan.'
+  PROJECT_ID: '712f9672-39e4-421a-b775-7627b4b82bc4'
+  BLOCK_PIPELINE: 'True'
+  BLOCK_CRITICAL: 'True'
+  BLOCK_HIGH: 'True'
+  BLOCK_MEDIUM: 'True'
+  CRITICAL_THRESHOLD: '1'
+  HIGH_THRESHOLD: '1'
+  MEDIUM_THRESHOLD: '1'
+  INTEGRATION_ID: 'fe898b04-345c-4cb9-be31-242e00fcf06b'
+  UPLOAD_API_URL: 'https://57bf-45-252-74-134.ngrok-free.app/v1/webHook'
 
 jobs:
-  security-scan:
+  run-security-scan:
     runs-on: windows-latest
-
     steps:
-      - name: Run Security Scan API
+
+      - name: Clone Only Specific File
+        shell: pwsh
+        run: |
+          Write-Host "Cloning only ${env:FILE_NAME}"
+          git init repo
+          cd repo
+          git remote add origin $env:GIT_REPO
+          git config core.sparseCheckout true
+          echo $env:FILE_NAME > .git/info/sparse-checkout
+          git pull origin $env:GIT_BRANCH
+
+      - name: Upload File to Security Scanner
+        shell: pwsh
+        run: |
+          if (Test-Path "repo\$env:FILE_NAME") {
+            Write-Host "Uploading file: $env:FILE_NAME"
+            curl.exe --location __BACKTICK__
+              --form "file=@repo\$env:FILE_NAME" __BACKTICK__
+              --form "project_id=$env:PROJECT_ID" __BACKTICK__
+              $env:UPLOAD_API_URL
+          } else {
+            throw "File '$env:FILE_NAME' not found in sparse clone"
+          }
+
+      - name: Call Security Scan API
         shell: pwsh
         run: |
           Write-Host "Calling Security Scan API..."
 
-          $apiUrl = "$env:SECURITY_SCAN_API_BASE/$env:PROJECT_ID"
-          Write-Host "Final API URL: $apiUrl"
-
-          $curlArgs = @(
-            "-s",
-            "-X", "POST",
-            "--header", "Content-Type: application/json",
-            "--header", "Api-Key: $env:INTEGRATION_ID",
+          $apiUrl = "$env:SECURITY_SCAN_API/$env:PROJECT_ID"
+          $response = curl.exe --silent --request POST __BACKTICK__
+            --header "Api-Key: $env:INTEGRATION_ID" __BACKTICK__
             $apiUrl
-          )
 
-          $curlResponse = & curl.exe @curlArgs
-
-          if (-not $curlResponse) {
+          if (-not $response) {
             throw "No response received from API."
           }
 
-          $responseJson = $curlResponse | ConvertFrom-Json
-          $rawJson = $curlResponse | ConvertTo-Json -Depth 10
-          Write-Host "Scan Response: $rawJson"
+          Write-Host "Scan Response: $response"
 
-          if ($rawJson -match '"message"\s*:\s*"token expired"') {
-            throw "Token expired. Pipeline blocked immediately."
+          if ($response -match '"message"\s*:\s*"token expired"') {
+            throw "Token expired. Exiting early."
           }
 
-          $critical = $responseJson.criticalCount
-          $high     = $responseJson.highCount
-          $medium   = $responseJson.mediumCount
+          function Extract-Int {
+            param([string]$key)
+            if ($response -match "__QUOTE__$key__QUOTE__\s*:\s*(\d+)") {
+              return [int]$matches[1]
+            } else {
+              return 0
+            }
+          }
 
-          Write-Host "Severity Summary:"
+          $critical = Extract-Int "criticalCount"
+          $high     = Extract-Int "highCount"
+          $medium   = Extract-Int "mediumCount"
+
+          Write-Host "Scan Summary:"
           Write-Host "Critical: $critical"
           Write-Host "High: $high"
           Write-Host "Medium: $medium"
 
           if ($env:BLOCK_PIPELINE -eq 'true') {
             if ($env:BLOCK_CRITICAL -eq 'true' -and $critical -ge [int]$env:CRITICAL_THRESHOLD) {
-              throw "Blocked due to Critical vulnerabilities exceeding threshold"
+              throw "Blocked due to critical vulnerabilities exceeding threshold."
             }
             if ($env:BLOCK_HIGH -eq 'true' -and $high -ge [int]$env:HIGH_THRESHOLD) {
-              throw "Blocked due to High vulnerabilities exceeding threshold"
+              throw "Blocked due to high vulnerabilities exceeding threshold."
             }
             if ($env:BLOCK_MEDIUM -eq 'true' -and $medium -ge [int]$env:MEDIUM_THRESHOLD) {
-              throw "Blocked due to Medium vulnerabilities exceeding threshold"
+              throw "Blocked due to medium vulnerabilities exceeding threshold."
             }
-            Write-Host "No blocking severity thresholds exceeded. Pipeline continued."
+            Write-Host "No blocking conditions met. Continuing pipeline."
           } else {
-            Write-Host "Blocking disabled. Continuing pipeline regardless of severity."
+            Write-Host "Blocking disabled. Continuing regardless of findings."
           }
 
       - name: Post-processing
