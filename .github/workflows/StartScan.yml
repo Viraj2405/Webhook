@@ -62,9 +62,15 @@ jobs:
           Write-Host "Calling Security Scan API..."
 
           $apiUrl = "$env:SECURITY_SCAN_API/$env:PROJECT_ID"
-          $response = curl.exe --silent --request POST __BACKTICK__
-            --header "Api-Key: $env:INTEGRATION_ID" __BACKTICK__
-            $apiUrl
+            $curlArgs = @(
+              "--silent",
+              "--request", "POST",
+              "--header", "Api-Key: $env:INTEGRATION_ID",
+              $apiUrl
+            )
+            
+            $response = & curl.exe @curlArgs
+
 
           if (-not $response) {
             throw "No response received from API."
