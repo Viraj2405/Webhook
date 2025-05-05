@@ -6,11 +6,11 @@ on:
       - main
 
 env:
-  GIT_REPO: 'https://github.com/Viraj2405/Webhook.git'
+  GIT_REPO: 'https://github.com/swirlai/swirl-search'
   GIT_BRANCH: 'main'
-  FILE_NAME: 'Haircut Store API-06-09-2024 (1).json'
+  FILE_NAME: 'Swirl.postman_collection.json'
   SECURITY_SCAN_API: 'https://57bf-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
-  PROJECT_ID: '712f9672-39e4-421a-b775-7627b4b82bc4'
+  PROJECT_ID: 'da195786-0e21-4199-9782-5730effb6699'
   BLOCK_PIPELINE: 'True'
   BLOCK_CRITICAL: 'True'
   BLOCK_HIGH: 'True'
@@ -18,54 +18,32 @@ env:
   CRITICAL_THRESHOLD: '1'
   HIGH_THRESHOLD: '1'
   MEDIUM_THRESHOLD: '1'
-  INTEGRATION_ID: 'fe898b04-345c-4cb9-be31-242e00fcf06b'
+  INTEGRATION_ID: '1fca4fb2-823c-426b-8079-8e75880d6174'
   UPLOAD_API_URL: 'https://57bf-45-252-74-134.ngrok-free.app/v1/webHook'
-
 jobs:
   run-security-scan:
     runs-on: windows-latest
     steps:
 
-      - name: Clone Only Specific File
+      - name: Clone Repository and Upload File
         shell: pwsh
         run: |
-          Write-Host "Cloning only $env:FILE_NAME"
-          git init repo
-          cd repo
-          git remote add origin $env:GIT_REPO
-          git config core.sparseCheckout true
-          echo $env:FILE_NAME > .git/info/sparse-checkout
-          git pull origin $env:GIT_BRANCH
-
-      - name: Upload File to Security Scanner
-        shell: pwsh
-        run: |
-          if (Test-Path "repo\$env:FILE_NAME") {
-            Write-Host "Uploading file: $env:FILE_NAME"
-            $args = @(
-              "--location",
-              "--form", "file=@repo\$env:FILE_NAME",
-              "--form", "project_id=$env:PROJECT_ID",
-              $env:UPLOAD_API_URL
-            )
-            & curl.exe @args
+          git clone --branch $env:GIT_BRANCH --depth 1 $env:GIT_REPO $env:TEMP_DIR
+          $filePath = Get-ChildItem -Path $env:TEMP_DIR -Recurse -File -Filter $env:FILE_NAME | Select-Object -First 1
+          if ($filePath) {
+            Write-Host "Found file: $($filePath.FullName)"
+            Copy-Item -Path $filePath.FullName -Destination "$env:FILE_NAME"
+            curl.exe --location --form "file=@$env:FILE_NAME" --form "project_id=$env:PROJECT_ID" $env:UPLOAD_API_URL
           } else {
-            throw "File '$env:FILE_NAME' not found in sparse clone"
+            throw "File '$env:FILE_NAME' not found in repository."
           }
 
-      - name: Call Security Scan API
+      - name: Run Security Scan
         shell: pwsh
         run: |
           Write-Host "Calling Security Scan API..."
           $apiUrl = "$env:SECURITY_SCAN_API/$env:PROJECT_ID"
-          $args = @(
-            "--silent",
-            "--request", "POST",
-            "--header", "Api-Key: $env:INTEGRATION_ID",
-            $apiUrl
-          )
-          $response = & curl.exe @args
-
+          $response = curl.exe --silent --request POST --header "Api-Key: $env:INTEGRATION_ID" $apiUrl
           if (-not $response) {
             throw "No response received from API."
           }
