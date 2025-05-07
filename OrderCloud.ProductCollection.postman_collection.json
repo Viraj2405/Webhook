@@ -1,0 +1,463 @@
+{
+	"info": {
+		"_postman_id": "8ba49359-9f58-41c4-a5e0-2f097acd2560",
+		"name": "OrderCloud.ProductCollection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23236759",
+		"_collection_link": "https://www.postman.com/blue-satellite-9251/workspace/himadri-s-public-postman-collections/collection/2874930-8ba49359-9f58-41c4-a5e0-2f097acd2560?action=share&source=collection_link&creator=23236759"
+	},
+	"item": [
+		{
+			"name": "Buyer Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"buyer_token\", jsonData.access_token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "<client id>",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "<username>",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "<password>",
+							"type": "text"
+						},
+						{
+							"key": "scope",
+							"value": "MeAdmin PasswordReset Shopper",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{sandbox_url}}/oauth/token",
+					"host": [
+						"{{sandbox_url}}"
+					],
+					"path": [
+						"oauth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Me",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{buyer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://sandboxapi.ordercloud.io/v1/me",
+					"protocol": "https",
+					"host": [
+						"sandboxapi",
+						"ordercloud",
+						"io"
+					],
+					"path": [
+						"v1",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "My Products",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{buyer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{sandbox_url}}/v1/me/products",
+					"host": [
+						"{{sandbox_url}}"
+					],
+					"path": [
+						"v1",
+						"me",
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "My Product Collections",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{buyer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{sandbox_url}}/v1/me/productcollections",
+					"host": [
+						"{{sandbox_url}}"
+					],
+					"path": [
+						"v1",
+						"me",
+						"productcollections"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a Product Collection",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{buyer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{sandbox_url}}/v1/me/productcollections/<collection id>",
+					"host": [
+						"{{sandbox_url}}"
+					],
+					"path": [
+						"v1",
+						"me",
+						"productcollections",
+						"<collection id>"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a Product Collection",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{buyer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"Name\": \"Wish List 1\",\n    \"xp\": {\n        \"CollectionType\": \"Wish List\"\n    }\n}"
+				},
+				"url": {
+					"raw": "{{sandbox_url}}/v1/me/productcollections",
+					"host": [
+						"{{sandbox_url}}"
+					],
+					"path": [
+						"v1",
+						"me",
+						"productcollections"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update a Product Collection",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{buyer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"Name\": \"Wish List 1\",\n    \"xp\": {\n        \"CollectionType\": \"Wish List\"\n    }\n}"
+				},
+				"url": {
+					"raw": "{{sandbox_url}}/v1/me/productcollections/<collection id>",
+					"host": [
+						"{{sandbox_url}}"
+					],
+					"path": [
+						"v1",
+						"me",
+						"productcollections",
+						"<collection id>"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add a Product to a Product Collection",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{buyer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"xp\": {\n        \"Quantity\": 2\n    }\n}"
+				},
+				"url": {
+					"raw": "{{sandbox_url}}/v1/me/productcollections/<collection id>/<product id>",
+					"host": [
+						"{{sandbox_url}}"
+					],
+					"path": [
+						"v1",
+						"me",
+						"productcollections",
+						"<collection id>",
+						"<product id>"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Products in a Product Collection",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true,
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{buyer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{sandbox_url}}/v1/me/productcollections/<collection id>/<product id>",
+					"host": [
+						"{{sandbox_url}}"
+					],
+					"path": [
+						"v1",
+						"me",
+						"productcollections",
+						"<collection id>",
+						"<product id>"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a Product in a Product Collection",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{buyer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{sandbox_url}}/v1/me/productcollections/<collection id>/<product id>",
+					"host": [
+						"{{sandbox_url}}"
+					],
+					"path": [
+						"v1",
+						"me",
+						"productcollections",
+						"<collection id>",
+						"<product id>"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a Product Collection",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{buyer_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{sandbox_url}}/v1/me/productcollections/<collection id>",
+					"host": [
+						"{{sandbox_url}}"
+					],
+					"path": [
+						"v1",
+						"me",
+						"productcollections",
+						"<collection id>"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
