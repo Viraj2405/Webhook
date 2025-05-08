@@ -4,23 +4,23 @@ trigger:
       - main
 
 variables:
-  GIT_REPO: 'https://github.com/swirlai/swirl-search'
-  GIT_BRANCH: 'main'
-  FILE_NAME: 'Swirl.postman_collection.json'
+  REPO_URL: 'https://github.com/Viraj2405/Hemangini'
+  BRANCH: 'main'
+  FILE_NAME: 'haircut-09-08-24 3 1.json'
 
-  SECURITY_SCAN_API: 'https://57bf-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
-  UPLOAD_API_URL: 'https://57bf-45-252-74-134.ngrok-free.app/v1/webHook'
-  APPKEYTOKEN: '0421f1d6-a08e-4220-8771-bdb013d15fef'
-  PROJECT_ID: 'da195786-0e21-4199-9782-5730effb6699'
+  SECURITY_SCAN_API: 'https://ff3a-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
+  UPLOAD_API_URL: 'https://ff3a-45-252-74-134.ngrok-free.app/v1/webHook'
+  APPKEYTOKEN: '31c5d4ac-ee53-455c-9bc2-e6404272a0fc'
+  PROJECT_ID: '3ffd6421-299a-403d-b65c-31e696fb4877'
 
-  BLOCK_PIPELINE: 'false'
-  BLOCK_CRITICAL: 'false'
-  BLOCK_HIGH: 'false'
-  BLOCK_MEDIUM: 'false'
+  BLOCK_PIPELINE: 'true'
+  BLOCK_CRITICAL: 'true'
+  BLOCK_HIGH: 'true'
+  BLOCK_MEDIUM: 'true'
 
-  CRITICAL_THRESHOLD: '0'
-  HIGH_THRESHOLD: '0'
-  MEDIUM_THRESHOLD: '0'
+  CRITICAL_THRESHOLD: '1'
+  HIGH_THRESHOLD: '1'
+  MEDIUM_THRESHOLD: '1'
 
 pool:
   vmImage: 'windows-latest'
@@ -31,7 +31,7 @@ steps:
     inputs:
       targetType: 'inline'
       script: |
-        git clone --branch $(GIT_BRANCH) --depth 1 $(GIT_REPO) temp-repo
+        git clone --branch $(BRANCH) --depth 1 $(REPO_URL) temp-repo
 
         $file = Get-ChildItem -Path temp-repo -Recurse -File -Filter "$(FILE_NAME)" | Select-Object -First 1
 
