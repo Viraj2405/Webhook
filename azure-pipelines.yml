@@ -6,12 +6,12 @@ trigger:
 variables:
   REPO_URL: 'https://github.com/Viraj2405/Hemangini'
   BRANCH: 'main'
-  FILE_NAME: 'Shiprocket API.postman_collection.json'
+  FILE_NAME: 'Trustfund.postman_collection.json'
 
   SECURITY_SCAN_API: 'http://103.81.38.252:9090/v1/startSecurityScan'
   UPLOAD_API_URL: 'http://103.81.38.252:9090/v1/webHook'
-  APPKEYTOKEN: 'f8b41038-9847-4d60-8f2a-4bbf0875b6f0'
-  PROJECT_ID: 'b56a8b25-221b-4a7d-beae-36d463f5e7b4'
+  APPKEYTOKEN: 'a26d6261-7c82-4496-b5f7-c5a88cef5db9'
+  PROJECT_ID: 'b4f1993d-b1b0-4521-8a10-321fc2353438'
 
   BLOCK_PIPELINE: 'true'
   BLOCK_CRITICAL: 'true'
