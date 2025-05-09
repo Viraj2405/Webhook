@@ -11,7 +11,7 @@ variables:
   SECURITY_SCAN_API: 'http://103.81.38.252:9090/v1/startSecurityScan'
   UPLOAD_API_URL: 'http://103.81.38.252:9090/v1/webHook'
   APPKEYTOKEN: '04b2be4e-ae5e-4476-adb4-3231d0d92082'
-  PROJECT_ID: 'e869b827-89e0-49bd-bf48-e815792a46a1'
+  PROJECT_ID: '0e0debd0-8a48-411f-bca4-68472d36ccc3'
 
   BLOCK_PIPELINE: 'true'
   BLOCK_CRITICAL: 'true'
