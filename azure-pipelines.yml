@@ -6,12 +6,12 @@ trigger:
 variables:
   REPO_URL: 'https://github.com/Viraj2405/Hemangini'
   BRANCH: 'main'
-  FILE_NAME: 'haircut-09-08-24 3 1.json'
+  FILE_NAME: 'Shiprocket API.postman_collection.json'
 
   SECURITY_SCAN_API: 'http://103.81.38.252:9090/v1/startSecurityScan'
   UPLOAD_API_URL: 'http://103.81.38.252:9090/v1/webHook'
-  APPKEYTOKEN: '01e2f255-b900-4463-a5c4-0c55c29fb96e'
-  PROJECT_ID: '38b496d0-2930-45f1-861d-875cf273c46e'
+  APPKEYTOKEN: 'f8b41038-9847-4d60-8f2a-4bbf0875b6f0'
+  PROJECT_ID: 'b56a8b25-221b-4a7d-beae-36d463f5e7b4'
 
   BLOCK_PIPELINE: 'true'
   BLOCK_CRITICAL: 'true'
