@@ -4,14 +4,14 @@ trigger:
       - main
 
 variables:
-  REPO_URL: 'https://github.com/Viraj2405/Webhook'
-  BRANCH: 'main'  
-  FILE_NAME: 'Haircut Store API NEW.json'
+  REPO_URL: 'https://github.com/Viraj2405/Hemangini'
+  BRANCH: 'main'
+  FILE_NAME: 'Venice.ai API.postman_collection.json'
 
-  SECURITY_SCAN_API: 'http://103.81.38.252:9090/v1/startSecurityScan'
-  UPLOAD_API_URL: 'http://103.81.38.252:9090/v1/webHook'
-  APPKEYTOKEN: '04b2be4e-ae5e-4476-adb4-3231d0d92082'
-  PROJECT_ID: '0e0debd0-8a48-411f-bca4-68472d36ccc3'
+  SECURITY_SCAN_API: 'https://4052-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
+  UPLOAD_API_URL: 'https://4052-45-252-74-134.ngrok-free.app/v1/webHook'
+  APPKEYTOKEN: '63d85056-49b4-4da8-824e-6e395903a5de'
+  PROJECT_ID: '64d9bb45-7312-4975-8895-94b83cf17dcd'
 
   BLOCK_PIPELINE: 'true'
   BLOCK_CRITICAL: 'true'
@@ -19,8 +19,8 @@ variables:
   BLOCK_MEDIUM: 'true'
 
   CRITICAL_THRESHOLD: '1'
-  HIGH_THRESHOLD: '2'
-  MEDIUM_THRESHOLD: '3'
+  HIGH_THRESHOLD: '1'
+  MEDIUM_THRESHOLD: '1'
 
 pool:
   vmImage: 'windows-latest'
@@ -38,10 +38,7 @@ steps:
         if ($file) {
           Write-Host "Found file: $($file.FullName)"
           Copy-Item -Path $file.FullName -Destination "$(FILE_NAME)"
-          curl.exe --location `
-            --form "file=@$(FILE_NAME)" `
-            --form "project_id=$(PROJECT_ID)" `
-            "$(UPLOAD_API_URL)"
+          curl.exe --location --form "file=@$(FILE_NAME)" --form "project_id=$(PROJECT_ID)" "$(UPLOAD_API_URL)"
         } else {
           throw "File '$(FILE_NAME)' not found in repository."
         }
