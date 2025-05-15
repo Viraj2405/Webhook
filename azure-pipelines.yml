@@ -4,23 +4,23 @@ trigger:
       - main
 
 variables:
-  REPO_URL: 'https://github.com/Viraj2405/Hemangini'
+  REPO_URL: 'https://github.com/Viraj2405/Marathe'
   BRANCH: 'main'
-  FILE_NAME: 'Venice.ai API.postman_collection.json'
+  FILE_NAME: 'OrderCloud.ProductCollection.postman_collection.json'
 
-  SECURITY_SCAN_API: 'https://4052-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
-  UPLOAD_API_URL: 'https://4052-45-252-74-134.ngrok-free.app/v1/webHook'
-  APPKEYTOKEN: '63d85056-49b4-4da8-824e-6e395903a5de'
-  PROJECT_ID: '64d9bb45-7312-4975-8895-94b83cf17dcd'
+  SECURITY_SCAN_API: 'https://7234-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
+  UPLOAD_API_URL: 'https://7234-45-252-74-134.ngrok-free.app/v1/webHook'
+  APPKEYTOKEN: '9a415177-0ac5-40f2-a096-ad868b1afbdc'
+  PROJECT_ID: 'e27c3715-5472-4b53-8d21-81c4eed06b53'
 
-  BLOCK_PIPELINE: 'true'
+  BLOCK_PIPELINE: 'false'
   BLOCK_CRITICAL: 'true'
-  BLOCK_HIGH: 'true'
-  BLOCK_MEDIUM: 'true'
+  BLOCK_HIGH: 'false'
+  BLOCK_MEDIUM: 'false'
 
   CRITICAL_THRESHOLD: '1'
-  HIGH_THRESHOLD: '1'
-  MEDIUM_THRESHOLD: '1'
+  HIGH_THRESHOLD: '0'
+  MEDIUM_THRESHOLD: '0'
 
 pool:
   vmImage: 'windows-latest'
