@@ -6,19 +6,19 @@ trigger:
 variables:
   REPO_URL: 'https://github.com/Viraj2405/Marathe'
   BRANCH: 'main'
-  FILE_NAME: 'OrderCloud.ProductCollection.postman_collection.json'
+  FILE_NAME: 'ArcGIS Service APIs.postman_collection.json'
 
-  SECURITY_SCAN_API: 'https://7234-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
-  UPLOAD_API_URL: 'https://7234-45-252-74-134.ngrok-free.app/v1/webHook'
-  APPKEYTOKEN: '9a415177-0ac5-40f2-a096-ad868b1afbdc'
-  PROJECT_ID: 'e27c3715-5472-4b53-8d21-81c4eed06b53'
+  SECURITY_SCAN_API: 'https://978b-45-252-74-134.ngrok-free.app/v1/startSecurityScan'
+  UPLOAD_API_URL: 'https://978b-45-252-74-134.ngrok-free.app/v1/webHook'
+  APPKEYTOKEN: '55829453-d9d1-45d9-b706-d06146523a50'
+  PROJECT_ID: '265c7763-d433-47b4-995b-d8b1135507ee'
 
   BLOCK_PIPELINE: 'false'
   BLOCK_CRITICAL: 'true'
-  BLOCK_HIGH: 'false'
-  BLOCK_MEDIUM: 'false'
+  BLOCK_HIGH: 'true'
+  BLOCK_MEDIUM: 'true'
 
-  CRITICAL_THRESHOLD: '1'
+  CRITICAL_THRESHOLD: '0'
   HIGH_THRESHOLD: '0'
   MEDIUM_THRESHOLD: '0'
 
