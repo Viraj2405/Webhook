@@ -1,0 +1,137 @@
+trigger:
+  branches:
+    include:
+      - main
+
+variables:
+- group: "BugDazz"
+
+- name: REPO_URL
+  value: "https://$(API_SC_TOKEN)@github.com/Viraj2405/Webhook"
+
+- name: BRANCH
+  value: 'main'
+
+- name: FILE_NAME
+  value: 'Haircut Store API NEW.json'
+
+- name: SECURITY_SCAN_API
+  value: 'https://dd7f2d537b70.ngrok-free.app/v1/startSecurityScan'
+
+- name: UPLOAD_API_URL
+  value: 'https://dd7f2d537b70.ngrok-free.app/v1/webHook'
+
+- name: APPKEYTOKEN
+  value: '0c6f026d-2050-4683-a959-0391dfb6b070'
+
+- name: PROJECT_ID
+  value: '1f3c334c-6438-4b74-bcc5-2e1142944dbf'
+
+- name: BLOCK_PIPELINE
+  value: 'true'
+
+- name: BLOCK_CRITICAL
+  value: 'true'
+
+- name: BLOCK_HIGH
+  value: 'true'
+
+- name: BLOCK_MEDIUM
+  value: 'true'
+
+- name: CRITICAL_THRESHOLD
+  value: '1'
+
+- name: HIGH_THRESHOLD
+  value: '1'
+
+- name: MEDIUM_THRESHOLD
+  value: '1'
+
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+  - task: PowerShell@2
+    displayName: 'Clone and Upload File'
+    inputs:
+      targetType: 'inline'
+      script: |
+        git clone --branch $(BRANCH) --depth 1 $(REPO_URL) temp-repo
+
+        $file = Get-ChildItem -Path temp-repo -Recurse -File -Filter "$(FILE_NAME)" | Select-Object -First 1
+
+        if ($file) {
+          Write-Host "Found file: $($file.FullName)"
+          Copy-Item -Path $file.FullName -Destination "$(FILE_NAME)"
+          curl.exe --location --form "file=@$(FILE_NAME)" --form "project_id=$(PROJECT_ID)" "$(UPLOAD_API_URL)"
+        } else {
+          throw "File '$(FILE_NAME)' not found in repository."
+        }
+
+  - task: PowerShell@2
+    displayName: 'Run Security Scan'
+    inputs:
+      targetType: 'inline'
+      script: |
+        Write-Host "Starting Security Scan..."
+
+        $apiUrl = "$(SECURITY_SCAN_API)/$(PROJECT_ID)"
+        $headers = @(
+          "--header", "Content-Type: application/json",
+          "--header", "Api-Key: $(APPKEYTOKEN)"
+        )
+
+        $args = @(
+          "--location",
+          "--request", "POST",
+          $apiUrl
+        ) + $headers
+
+        $response = & curl.exe @args
+
+        Write-Host "Scan Response: $response"
+
+        if ($response -match '"message"\s*:\s*"token expired"') {
+          throw "Token expired. Blocking pipeline."
+        }
+
+        function Extract-Count {
+          param ($name)
+          if ($response -match '"' + $name + '"\s*:\s*(\d+)') {
+            return [int]$Matches[1]
+          }
+          return 0
+        }
+
+        $critical = Extract-Count 'criticalCount'
+        $high     = Extract-Count 'highCount'
+        $medium   = Extract-Count 'mediumCount'
+
+        Write-Host "Severity Summary:"
+        Write-Host "Critical: $critical"
+        Write-Host "High: $high"
+        Write-Host "Medium: $medium"
+
+        $criticalThreshold = [int]"$(CRITICAL_THRESHOLD)"
+        $highThreshold     = [int]"$(HIGH_THRESHOLD)"
+        $mediumThreshold   = [int]"$(MEDIUM_THRESHOLD)"
+
+        if ("$(BLOCK_PIPELINE)" -eq 'true') {
+          if ("$(BLOCK_CRITICAL)" -eq 'true' -and $critical -gt $criticalThreshold) {
+            throw "Blocked due to critical vulnerabilities exceeding threshold."
+          }
+          if ("$(BLOCK_HIGH)" -eq 'true' -and $high -gt $highThreshold) {
+            throw "Blocked due to high vulnerabilities exceeding threshold."
+          }
+          if ("$(BLOCK_MEDIUM)" -eq 'true' -and $medium -gt $mediumThreshold) {
+            throw "Blocked due to medium vulnerabilities exceeding threshold."
+          }
+          Write-Host "No blocking conditions met. Continuing pipeline."
+        } else {
+          Write-Host "Blocking disabled. Continuing regardless of findings."
+        }
+
+  - script: echo "Post-processing complete."
+    displayName: 'Post-processing'
