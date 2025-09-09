@@ -31,7 +31,7 @@ variables:
   value: 'a993792e-e016-44dd-b6e5-54a61899c25a'
 
 - name: BLOCK_PIPELINE
-  value: 'false'
+  value: 'true'
 
 - name: BLOCK_CRITICAL
   value: 'true'
@@ -43,13 +43,13 @@ variables:
   value: 'true'
 
 - name: CRITICAL_THRESHOLD
-  value: ''
+  value: '0'
 
 - name: HIGH_THRESHOLD
-  value: ''
+  value: '0'
 
 - name: MEDIUM_THRESHOLD
-  value: ''
+  value: '0'
 
 pool:
   vmImage: 'windows-latest'
@@ -146,14 +146,14 @@ steps:
         project_id = "$(PROJECT_ID)"
       } | ConvertTo-Json
       Write-Host "Sending JSON body: $body"
-      Invoke-RestMethod -Uri $reportApi -Method Post -Headers $headers -Body $body -OutFile "_20250909_145126.pdf"
+      Invoke-RestMethod -Uri $reportApi -Method Post -Headers $headers -Body $body -OutFile "_20250909_150823.pdf"
       Write-Host "PDF report saved as report.pdf"
 
 - task: PublishPipelineArtifact@1
   displayName: 'Publish Vulnerability Report'
   condition: or(gt(variables['critical'], 0), gt(variables['high'], 0), gt(variables['medium'], 0))
   inputs:
-    targetPath: '$(System.DefaultWorkingDirectory)/_20250909_145126.pdf'
+    targetPath: '$(System.DefaultWorkingDirectory)/_20250909_150823.pdf'
     artifact: 'VulnerabilityReport'
     publishLocation: 'pipeline'
 
