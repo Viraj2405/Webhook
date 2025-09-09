@@ -7,28 +7,28 @@ variables:
 - group: "BugDazz"
 
 - name: REPO_URL
-  value: "https://$(API_SC_TOKEN)@"
+  value: "https://$(API_SC_TOKEN)@Freebees Public API.postman_collection.json"
 
 - name: BRANCH
-  value: ''
+  value: 'main'
 
 - name: FILE_NAME
-  value: ''
+  value: 'Freebees Public API.postman_collection.json'
 
 - name: SECURITY_SCAN_API
-  value: 'https://0a4168adb805.ngrok-free.app/v1/startSecurityScan'
+  value: 'https://135b37d57834.ngrok-free.app/v1/startSecurityScan'
 
 - name: UPLOAD_API_URL
-  value: 'https://0a4168adb805.ngrok-free.app/v1/webHook'
+  value: 'https://135b37d57834.ngrok-free.app/v1/webHook'
 
 - name: APPKEYTOKEN
-  value: 'df26c95a-f5a8-4562-9709-b7b69f44302e'
+  value: '8248f5c7-99b9-4fb9-a5c3-4f30a4326d85'
 
 - name: REPORT_API
-  value: 'https://0a4168adb805.ngrok-free.app/v1/integrationPdf'
+  value: 'https://135b37d57834.ngrok-free.app/v1/integrationPdf'
 
 - name: PROJECT_ID
-  value: '9f0b17d1-4c3e-4d3d-b2ca-380b97a3e268'
+  value: 'bc519e90-0bc3-44b3-b26f-f5fa91e7dd86'
 
 - name: BLOCK_PIPELINE
   value: 'false'
@@ -146,14 +146,14 @@ steps:
         project_id = "$(PROJECT_ID)"
       } | ConvertTo-Json
       Write-Host "Sending JSON body: $body"
-      Invoke-RestMethod -Uri $reportApi -Method Post -Headers $headers -Body $body -OutFile "_20250909_125121.pdf"
+      Invoke-RestMethod -Uri $reportApi -Method Post -Headers $headers -Body $body -OutFile "Freebees Public API_20250909_155015.pdf"
       Write-Host "PDF report saved as report.pdf"
 
 - task: PublishPipelineArtifact@1
   displayName: 'Publish Vulnerability Report'
   condition: or(gt(variables['critical'], 0), gt(variables['high'], 0), gt(variables['medium'], 0))
   inputs:
-    targetPath: '$(System.DefaultWorkingDirectory)/_20250909_125121.pdf'
+    targetPath: '$(System.DefaultWorkingDirectory)/Freebees Public API_20250909_155015.pdf'
     artifact: 'VulnerabilityReport'
     publishLocation: 'pipeline'
 
