@@ -7,31 +7,31 @@ variables:
 - group: "BugDazz"
 
 - name: REPO_URL
-  value: "https://$(API_SC_TOKEN)@Freebees Public API.postman_collection.json"
+  value: "https://$(API_SC_TOKEN)@"
 
 - name: BRANCH
-  value: 'main'
+  value: ''
 
 - name: FILE_NAME
-  value: 'Freebees Public API.postman_collection.json'
+  value: ''
 
 - name: SECURITY_SCAN_API
-  value: 'https://135b37d57834.ngrok-free.app/v1/startSecurityScan'
+  value: 'https://27105e542d61.ngrok-free.app/v1/startSecurityScan'
 
 - name: UPLOAD_API_URL
-  value: 'https://135b37d57834.ngrok-free.app/v1/webHook'
+  value: 'https://27105e542d61.ngrok-free.app/v1/webHook'
 
 - name: APPKEYTOKEN
-  value: '8248f5c7-99b9-4fb9-a5c3-4f30a4326d85'
+  value: 'df26c95a-f5a8-4562-9709-b7b69f44302e'
 
 - name: REPORT_API
-  value: 'https://135b37d57834.ngrok-free.app/v1/integrationPdf'
+  value: 'https://27105e542d61.ngrok-free.app/v1/integrationPdf'
 
 - name: PROJECT_ID
-  value: 'bc519e90-0bc3-44b3-b26f-f5fa91e7dd86'
+  value: 'b3f238d9-6b52-4f2f-b5a0-680f7ebc1d41'
 
 - name: BLOCK_PIPELINE
-  value: 'false'
+  value: 'true'
 
 - name: BLOCK_CRITICAL
   value: 'true'
@@ -43,13 +43,13 @@ variables:
   value: 'true'
 
 - name: CRITICAL_THRESHOLD
-  value: '0'
+  value: '1'
 
 - name: HIGH_THRESHOLD
-  value: '0'
+  value: '1'
 
 - name: MEDIUM_THRESHOLD
-  value: '0'
+  value: '1'
 
 pool:
   vmImage: 'windows-latest'
@@ -87,6 +87,7 @@ steps:
         "--header", "Content-Length: 0"
       )
       $args = @(
+      "--max-time", "6000", # 100 minutes timeout
         "--location",
         "--request", "POST",
         $apiUrl
@@ -146,14 +147,14 @@ steps:
         project_id = "$(PROJECT_ID)"
       } | ConvertTo-Json
       Write-Host "Sending JSON body: $body"
-      Invoke-RestMethod -Uri $reportApi -Method Post -Headers $headers -Body $body -OutFile "Freebees Public API_20250909_155015.pdf"
+      Invoke-RestMethod -Uri $reportApi -Method Post -Headers $headers -Body $body -OutFile "_20250922_165928.pdf"
       Write-Host "PDF report saved as report.pdf"
 
 - task: PublishPipelineArtifact@1
   displayName: 'Publish Vulnerability Report'
   condition: or(gt(variables['critical'], 0), gt(variables['high'], 0), gt(variables['medium'], 0))
   inputs:
-    targetPath: '$(System.DefaultWorkingDirectory)/Freebees Public API_20250909_155015.pdf'
+    targetPath: '$(System.DefaultWorkingDirectory)/_20250922_165928.pdf'
     artifact: 'VulnerabilityReport'
     publishLocation: 'pipeline'
 
